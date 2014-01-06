@@ -1,0 +1,35 @@
+{
+    "name": "adrianmiu/sirius-upload",
+    "description": "File upload handling library",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "form",
+        "upload",
+        "validation",
+        "file"
+    ],
+    "authors": [
+        {
+            "name": "Adrian Miu",
+            "email": "adrian@adrianmiu.ro"
+        }
+    ],
+    "version": "dev-master",
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.4"
+    },
+    "require-dev": {
+    	"phpunit/phpunit": "dev-master",
+        "satooshi/php-coveralls": "dev-master"
+    },
+    "suggests": {
+    	"knplabs/gaufrette": "If you need to upload to different destinations, not just to the local file system"
+    },
+    "autoload": {
+        "psr-0": {
+            "Sirius\\Upload\\": "src/Upload"
+        }
+    }
+}

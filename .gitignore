@@ -1,5 +1,6 @@
-INSTALL.txt
-LICENSE.txt
-README.txt
-demos/
-extras/documentation
+build/
+/.settings
+/.buildpath
+/.project
+/vendor
+/composer.lock
