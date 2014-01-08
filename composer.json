@@ -1,5 +1,5 @@
 {
-    "name": "adrianmiu/sirius-upload",
+    "name": "sirius/upload",
     "description": "File upload handling library",
     "type": "library",
     "license": "MIT",
@@ -24,12 +24,12 @@
     	"phpunit/phpunit": "dev-master",
         "satooshi/php-coveralls": "dev-master"
     },
-    "suggests": {
-    	"knplabs/gaufrette": "If you need to upload to different destinations, not just to the local file system"
+    "suggest": {
+    	"frenkynet/flysystem": "If you need to upload to different destinations, not just to the local file system"
     },
     "autoload": {
-        "psr-0": {
-            "Sirius\\Upload\\": "src/Upload"
-        }
+        "files": [
+            "autoload.php"
+        ]
     }
 }
