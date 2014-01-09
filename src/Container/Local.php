@@ -30,7 +30,7 @@ class Local implements ContainerInterface {
      * @param string $file
      */
     public function has($file) {
-        return file_exists($this->baseDirectory . $filename);
+        return file_exists($this->baseDirectory . $file);
     }
     
     /**
