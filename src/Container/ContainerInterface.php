@@ -5,6 +5,11 @@ namespace Sirius\Upload\Container;
 interface ContainerInterface {
     
     /**
+     * Check if the container is writable
+     */
+    public function isWritable();
+
+    /**
      * This will check if a file is in the container
      * 
      * @param string $file

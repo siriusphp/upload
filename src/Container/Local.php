@@ -23,6 +23,12 @@ class Local implements ContainerInterface {
         return is_dir($directory) && is_writable($directory);
     }
     
+    /**
+     * Check if the container is writable
+     */
+    public function isWritable() {
+        return is_writable($this->baseDirectory);
+    }
     
     /**
      * This will check if a file is in the container
@@ -30,7 +36,7 @@ class Local implements ContainerInterface {
      * @param string $file
      */
     public function has($file) {
-        return file_exists($this->baseDirectory . $file);
+        return $file && file_exists($this->baseDirectory . $file);
     }
     
     /**
