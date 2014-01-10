@@ -26,6 +26,27 @@ class Handler implements UploadHandlerInterface {
      * @var boolean
      */
     protected $overwrite = false;
+
+    /**
+     * Whether or not the uploaded files are auto confirmed
+     * 
+     * @var boolean
+     */
+    protected $autoConfirm = false;
+
+    /**
+     * Whether or not there was only one file being uploaded
+     * 
+     * @var boolean
+     */
+    protected $isSingle = true;
+
+    /**
+     * The list of validation messages associated with the upload
+     *
+     * @var array
+     */
+    protected $messages = array();
     
     function __construct($directoryOrContainer, $prefix = '', $overwrite = false) {
         if ($directoryOrContainer instanceof ContainerInterface) {
@@ -42,18 +63,22 @@ class Handler implements UploadHandlerInterface {
     }
     
     function process($files = array()) {
+        $this->isSingle = isset($files['name']) && isset($files['name'])
+        
         $this->files = $this->normalizeFiles($files);
         foreach ($this->files as $k => $file) {
             $files[$k] = $this->processSingleFile($file);
         }
-        return $this->files;
+        return empty($this->messages);
     }
     
     function clear($file) {
         $files = is_array($file) ? $file : array($file);
         foreach ($files as $file) {
-            $this->container->delete($file);
-            $this->container->delete($file . '.lock');
+            if ($this->container->has($file . '.lock')) {
+                $this->container->delete($file);
+                $this->container->delete($file . '.lock');
+            ]
         }
     }
     
@@ -62,6 +87,23 @@ class Handler implements UploadHandlerInterface {
         foreach ($files as $file) {
             $this->container->delete($file . '.lock');
         }
+    }
+
+    function getResult() {
+        $result = false;
+        if ($this->isSingle) {
+            $result = isset($this->files[0]) ? $this->files[0]['uploaded_name'] : false;
+        } else {
+            $result = array();
+            foreach ($this->files as $file) {
+                $result[] = $file['uploaded_name'];
+            }
+        }
+        return $result;
+    }
+
+    function getMessages() {
+        return $this->getMessages();
     }
     
     protected function processSingleFile($file) {
@@ -101,7 +143,7 @@ class Handler implements UploadHandlerInterface {
     }
     
     protected function fixUploadedFileName($name) {
-        $name = preg_replace('/[^a-z0-9]+/', '_', strtolower($name));
+        $name = preg_replace('/[^a-z0-9\.]+/', '_', strtolower($name));
         return preg_replace('/[_]+/', '_', $name);
     }
 }
