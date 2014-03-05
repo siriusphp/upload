@@ -63,7 +63,7 @@ class Handler implements UploadHandlerInterface {
     }
     
     function process($files = array()) {
-        $this->isSingle = isset($files['name']) && isset($files['name'])
+        $this->isSingle = isset($files['name']) && isset($files['name']);
         
         $this->files = $this->normalizeFiles($files);
         foreach ($this->files as $k => $file) {
@@ -78,7 +78,7 @@ class Handler implements UploadHandlerInterface {
             if ($this->container->has($file . '.lock')) {
                 $this->container->delete($file);
                 $this->container->delete($file . '.lock');
-            ]
+            }
         }
     }
     
