@@ -1,5 +1,5 @@
 {
-    "name": "sirius/upload",
+    "name": "siriusphp/upload",
     "description": "File upload handling library",
     "type": "library",
     "license": "MIT",
@@ -19,7 +19,7 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.4",
-        "sirius/validation": "dev-master"
+        "siriusphp/validation": "dev-master"
     },
     "require-dev": {
     	"phpunit/phpunit": "dev-master",
