@@ -4,8 +4,8 @@ Framework agnostic upload handler library.
 
 ## Features
 
-1. Validate files agains a pletora of rules: extension, file size, image size (with, height, ratio)
-2. Move valid uploaded files into containers. Containers are usually local folders but you can implement your own or use other filesystem abstractions like [Gaufrette](https://github.com/KnpLabs/Gaufrette) or [Flysystem](https://github.com/FrenkyNet/Flysystem).
+1. Validates files agains usual rules: extension, file size, image size (wdith, height, ratio)
+2. Moves valid uploaded files into containers. Containers are usually local folders but you can implement your own or use other filesystem abstractions like [Gaufrette](https://github.com/KnpLabs/Gaufrette) or [Flysystem](https://github.com/FrenkyNet/Flysystem).
 
 ## Elevator pitch
 
@@ -39,14 +39,18 @@ if ($savedImage) {
 
 1. Uploaded file is validated agains the rules. By default the library will check if the upload is valid (ie: no errors during upload)
 2. The name of the uploaded file is sanitized (keep only letters, numbers and underscore than lowercase). You may implement your own sanitization function if you want.
-3. If overwrite is not allowed, and a file with the same name already exists in the container, alter the name of the uploaded file with one that does not exist.
-4. Move the uploaded file to the container and create a lock file (filename + '.lock') so that we know the upload is not confirmed
+3. If overwrite is not allowed, and a file with the same name already exists in the container, the library tries to find an avaiable file name based on the original file name.
+4. Moves the uploaded file to the container. It also create a lock file (filename + '.lock') so that we know the upload is not confirmed
 5. If something wrong happens in your app and you want to get rid of the uploaded file you can `clear()` the uploaded file which will remove the file and its `.lock` file. Only files that have a coresponding `.lock` file attached can be cleared
 6. If everything is in order you can `confirm` the upload. This will remove the `.lock` file attached to the upload file.
 
-The `locking` functionality was implemented because there are webapps that implement ajax uploaders and lots of files may be uploaded to the server, files that are never used by the application. So, even if you're not able to execute the `clear()` method you will be able to look into the container in "spot" the unused files. This feature must be used with care
+### What is "locking"?
+
+Usualy application accept file uploads to store them for future use (product images, people resumes etc). But from the time an uploaded file is moved to its container until the actual data is saved there are things that can go wrong (eg: the database goes down).
+For this reason the `locking` functionality was implemented. This way, even if you're not able to execute the `clear()` method you will be able to look into the container in "spot" the unused files. This feature must be used with care
+
 1. If you want to take advantage of this feature you must use `confirm`
-2. If you don't like it, use `$uploadHandler->setAutoConfirm(true)` and all uploaded files will never get a `.lock` file attached to them
+2. If you don't like it, use `$uploadHandler->setAutoConfirm(true)` and all uploaded files will automatically confirmed
 
 ## Using different containers
 
