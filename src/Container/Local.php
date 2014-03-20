@@ -20,7 +20,7 @@ class Local implements ContainerInterface {
         if (!is_dir($directory)) {
             mkdir($directory, 0766, true);
         }
-        return is_dir($directory) && is_writable($directory);
+        return is_dir($directory) && $this->isWritable();
     }
     
     /**
@@ -79,8 +79,6 @@ class Local implements ContainerInterface {
         if ($this->ensureDirectory($dir) && file_exists($localFile)) {
             if (is_uploaded_file($localFile)) {
                 return move_uploaded_file($localFile, $this->baseDirectory . $destination);
-            } else {
-                return rename($localFile, $this->baseDirectory . $destination);
             }
         }
         return false;

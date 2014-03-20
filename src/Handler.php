@@ -49,17 +49,31 @@ class Handler implements UploadHandlerInterface {
     protected $messages = array();
     
     function __construct($directoryOrContainer, $prefix = '', $overwrite = false) {
-        if ($directoryOrContainer instanceof ContainerInterface) {
-            $this->container = $directoryOrContainer;
-        } elseif (is_string($directoryOrContainer)) {
-            $this->container = new LocalContainer($directoryOrContainer);
-        }
-        if (!$this->container) {
+        $container = $directoryOrContainer;
+    	if (is_string($directoryOrContainer)) {
+    		$container = new LocalContainer($directoryOrContainer);
+    	}
+    	if (!$container instanceof ContainerInterface) {
             throw new InvalidContainerException('Destination container for uploaded files is missing');
         }
-        $this->webLocation = (string)$webLocation;
+        $this->container = $container;
         $this->prefix = (string)$prefix;
         $this->overwrite = (bool)$overwrite;
+    }
+    
+    function setOverwrite(bool $overwrite) {
+    	$this->overwrite = $overwrite;
+    	return $this;
+    }
+    
+    function setPrefix(string $prefix) {
+    	$this->prefix = $prefix;
+    	return $this;
+    }
+    
+    function setAutoconfirm(bool $autoConfirm) {
+    	$this->autoConfirm = $autoConfirm;
+    	return $this;
     }
     
     function process($files = array()) {
@@ -69,7 +83,7 @@ class Handler implements UploadHandlerInterface {
         foreach ($this->files as $k => $file) {
             $files[$k] = $this->processSingleFile($file);
         }
-        return empty($this->messages);
+        return empty($this->getMessages());
     }
     
     function clear($file) {
@@ -103,7 +117,7 @@ class Handler implements UploadHandlerInterface {
     }
 
     function getMessages() {
-        return $this->getMessages();
+        return $this->messages;
     }
     
     protected function processSingleFile($file) {

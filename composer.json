@@ -19,7 +19,7 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.4",
-        "siriusphp/validation": "dev-master"
+        "siriusphp/validation": ">=1.0"
     },
     "require-dev": {
     	"phpunit/phpunit": "dev-master",
