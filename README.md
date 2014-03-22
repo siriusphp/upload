@@ -1,10 +1,10 @@
-#Sirius\Upload
+# Sirius\Upload
 
 Framework agnostic upload handler library.
 
 ## Features
 
-1. Validates files agains usual rules: extension, file size, image size (wdith, height, ratio)
+1. Validates files agains usual rules: extension, file size, image size (wdith, height, ratio). It uses [Sirius Validation](http://github.com/siriusphp/validation) for this purpose.
 2. Moves valid uploaded files into containers. Containers are usually local folders but you can implement your own or use other filesystem abstractions like [Gaufrette](https://github.com/KnpLabs/Gaufrette) or [Flysystem](https://github.com/FrenkyNet/Flysystem).
 
 ## Elevator pitch
@@ -12,26 +12,26 @@ Framework agnostic upload handler library.
 ```php
 use Sirius\Upload\Handler as UploadHandler;
 $uploadHandler = new UploadHandler('/path/to/local_folder', 'subdirectory', false /* do not overwrite existing files in container*/);
-$uploadHandler->getValidator()->add('extension', ['allowed' => 'jpg', 'jpeg', 'png'], '{label} should be a valid image (jpg, jpeg, png)', 'Profile picture');
-$uploadHandler->getValidator()->add('filesize', ['max' => '20M'], '{label} should have less than {max}', 'Profile picture');
-$uploadHandler->getValidator()->add('imageratio', ['ratio' => 1], '{label} should be a sqare image', 'Profile picture');
+$uploadHandler->addRule('extension', ['allowed' => 'jpg', 'jpeg', 'png'], '{label} should be a valid image (jpg, jpeg, png)', 'Profile picture');
+$uploadHandler->addRule('filesize', ['max' => '20M'], '{label} should have less than {max}', 'Profile picture');
+$uploadHandler->addRule('imageratio', ['ratio' => 1], '{label} should be a sqare image', 'Profile picture');
 
-$savedImage = $uploadHandler->process($_FILES['picture']); // ex: subdirectory/my_headshot.png
+$result = $uploadHandler->process($_FILES['picture']); // ex: subdirectory/my_headshot.png
 
-if ($savedImage) {
+if ($result->isValid()) {
 	// do something with the image like attaching it to a model etc
 	try {
-		$profile->picture = $savedImage;
+		$profile->picture = $result->name;
 		$profile->save();
-		$uploadHandler->confirm($savedFile); // this will remove the temporary marker attached to that file
+		$uploadHandler->confirm($result); // this will remove the temporary marker attached to that file
 	} catch (\Exception $e) {
 		// something wrong happend, we don't need the uploaded picture anymore
-		$uploadHandler->clear($savedImage);
+		$uploadHandler->clear($result);
 		throw $e;
 	}
 } else {
 	// image was not saved, most likely due to the file not being valid
-	$messages = $uploadHandler->getMessages();
+	$messages = $result->getMessages();
 }
 ```
 

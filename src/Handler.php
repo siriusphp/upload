@@ -4,8 +4,13 @@ namespace Sirius\Upload;
 use Sirius\Upload\Container\ContainerInterface;
 use Sirius\Upload\Container\Local as LocalContainer;
 use Sirius\Upload\Exception\InvalidContainerException;
+use Sirius\Validation\ErrorMessage;
 
 class Handler implements UploadHandlerInterface {
+    const OPTION_PREFIX = 'prefix';
+    const OPTION_OVERWRITE = 'overwrite';
+    const OPTION_AUTOCONFIRM = 'autoconfirm';
+    
     /**
      * @var ContainerInterface
      */
@@ -13,9 +18,10 @@ class Handler implements UploadHandlerInterface {
     
     /**
      * Prefix to be added to the file.
-     * It can be a subfolder or just a string to be used as prefix
+     * It can be a subfolder (if it ends with '/', a string to be used as prefix) 
+     * or a callback that returns a string
      * 
-     * @var string
+     * @var string|callback
      */
     protected $prefix = '';
     
@@ -32,130 +38,213 @@ class Handler implements UploadHandlerInterface {
      * 
      * @var boolean
      */
-    protected $autoConfirm = false;
+    protected $autoconfirm = false;
 
-    /**
-     * Whether or not there was only one file being uploaded
-     * 
-     * @var boolean
-     */
-    protected $isSingle = true;
-
-    /**
-     * The list of validation messages associated with the upload
-     *
-     * @var array
-     */
-    protected $messages = array();
-    
-    function __construct($directoryOrContainer, $prefix = '', $overwrite = false) {
+    function __construct($directoryOrContainer, ErrorMessage $errorMessagePrototype = null, $options = array()) {
         $container = $directoryOrContainer;
     	if (is_string($directoryOrContainer)) {
     		$container = new LocalContainer($directoryOrContainer);
     	}
     	if (!$container instanceof ContainerInterface) {
-            throw new InvalidContainerException('Destination container for uploaded files is missing');
+            throw new InvalidContainerException('Destination container for uploaded files is not valid');
         }
         $this->container = $container;
-        $this->prefix = (string)$prefix;
-        $this->overwrite = (bool)$overwrite;
+        
+        // create the error message prototype if it does not exist
+        if (!$errorMessagePrototype) {
+            $errorMessagePrototype = new ErrorMessage;
+        }
+        
+        // set options
+        $availableOptions = array(
+        	static::OPTION_PREFIX => 'setPrefix',
+            static::OPTION_OVERWRITE => 'setOverwrite',
+            static::OPTION_AUTOCONFIRM => 'setAutoconfirm'
+        );
+        foreach ($availableOptions as $key => $method) {
+            if (isset($options[$key])) {
+                $this->{$method}($options[$key]);
+            }
+        }
     }
     
-    function setOverwrite(bool $overwrite) {
-    	$this->overwrite = $overwrite;
+    function setOverwrite($overwrite) {
+    	$this->overwrite = (bool) $overwrite;
     	return $this;
     }
     
-    function setPrefix(string $prefix) {
+    function setPrefix($prefix) {
     	$this->prefix = $prefix;
     	return $this;
     }
     
-    function setAutoconfirm(bool $autoConfirm) {
-    	$this->autoConfirm = $autoConfirm;
+    function setAutoconfirm($autoconfirm) {
+    	$this->autoconfirm = (bool) $autoconfirm;
     	return $this;
     }
     
     function process($files = array()) {
-        $this->isSingle = isset($files['name']) && isset($files['name']);
+        $isSingle = isset($files['name']) && !is_array($files['name']);
+
+        $files = $this->normalizeFiles($files);
         
-        $this->files = $this->normalizeFiles($files);
-        foreach ($this->files as $k => $file) {
+        foreach ($files as $k => $file) {
             $files[$k] = $this->processSingleFile($file);
         }
-        return empty($this->getMessages());
-    }
-    
-    function clear($file) {
-        $files = is_array($file) ? $file : array($file);
-        foreach ($files as $file) {
-            if ($this->container->has($file . '.lock')) {
-                $this->container->delete($file);
-                $this->container->delete($file . '.lock');
-            }
-        }
-    }
-    
-    function confirm($file) {
-        $files = is_array($file) ? $file : array($file);
-        foreach ($files as $file) {
-            $this->container->delete($file . '.lock');
-        }
-    }
-
-    function getResult() {
-        $result = false;
-        if ($this->isSingle) {
-            $result = isset($this->files[0]) ? $this->files[0]['uploaded_name'] : false;
-        } else {
-            $result = array();
-            foreach ($this->files as $file) {
-                $result[] = $file['uploaded_name'];
-            }
-        }
-        return $result;
-    }
-
-    function getMessages() {
-        return $this->messages;
-    }
-    
-    protected function processSingleFile($file) {
         
+        if ($isSingle) {
+            return new Result\File($files[0]);
+        }
+        return new Result\Collection($files);
     }
     
-    protected function normalizeFiles($files) {
-        // wrong format, go away
-        if (!is_array($files) || !isset($files['name'])) {
-            return array();
+    function clear($result) {
+        if ($result instanceof Result\Collection) {
+            return $this->clearCollection($result);
         }
-        $result = array();
+        if ($result instanceof Result\File) {
+            return $this->clearFile($result);
+        }
+        throw new Exception\InvalidResultException('Result passed for clearing is not valid');
+    }
+    
+    protected function clearFile(Result\File $file) {
+        $this->container->delete($file->name);
+        $this->container->delete($file->name . '.lock');
+        return true;
+    }
+    
+    protected function clearCollection(Result\Collection $collection) {
+        foreach ($collection as $file) {
+            $this->clearFile($file);
+        }
+        return true;
+    }
+    
+    function confirm($result) {
+        if ($result instanceof Result\Collection) {
+            return $this->confirmCollection($result);
+        }
+        if ($result instanceof Result\File) {
+            return $this->confirmFile($result);
+        }
+        throw new Exception\InvalidResultException('Result passed for confirmation is not valid');
+    }
+    
+    protected function confirmFile(Result\File $file) {
+        $this->container->delete($file->name . '.lock');
+        return true;
+    }
+    
+    protected function confirmCollection(Result\Collection $collection) {
+        foreach ($collection as $file) {
+            $this->confirmFile($file);
+        }
+        return true;
+    }
+    
+
+    /**
+     * Processes a single uploaded file
+     * - sanitize the name
+     * - validates the file
+     * - if valid, moves the file to the container
+     * 
+     * @param array $file
+     * @return array
+     */
+    protected function processSingleFile(array $file) {
+        // sanitize the file name
+        $file['name'] = $this->fixUploadedFileName($file['name']);
+        
+        $file = $this->validateFile($file);
+        // if there are messages the file is not valid
+        if (isset($file['messages']) && $file['messages']) {
+            return $file;
+        }
+        
+        // add the prefix
+        $prefix = '';
+        if (is_callable($this->prefix)) {
+            $prefix = (string) call_user_func($this->prefix, $file['name']);
+        } elseif (is_string($this->prefix)) {
+            $prefix = (string) $this->prefix;
+        }
+        
+        // if overwrite is not allowed, check if the file is already in the container
+        if (!$this->overwrite) {
+            if ($this->container->has($prefix . $file['name'])) {
+                // add the timestamp to ensure the file is unique
+                // method is not bulletproof but it's pretty safe
+                $file['name'] = time() . '_' . $file['name'];
+            }
+        }
+
+        // attempt to move the uploaded file into the container
+        if (!$this->container->moveUploadedFile($file['tmp_name'], $prefix . $file['name'])) {
+            $file['name'] = false;
+            return $file;
+        }
+        
+        $file['name'] = $prefix . $file['name'];
+        // create the lock file if autoconfirm is disabled
+        if (!$this->autoconfirm) {
+            $this->container->save($file['name'] . '.lock', time());
+        }
+        return $file;
+    }
+    
+    protected function validateFile($file) {
+        return $file;
+    }
+    
+    /**
+     * Fixes the $_FILES array problem and ensures the result is an array of files
+     * 
+     * PHP's $_FILES variable is not properly formated for iteration when
+     * multiple files are uploaded under the same name
+     * @see http://www.php.net/manual/en/features.file-upload.php
+     * 
+     * @param array $files
+     * @return array
+     */
+    protected function normalizeFiles(array $files) {
+        // we have a single file
+        if (isset($files['name']) && !is_array($files['name'])) {
+            return array($files);
+        }
+        
         // we have list of files, which PHP messes up
         if (is_array($files['name'])) {
+            $result = array();
             foreach ($files['name'] as $k => $v) {
                 $result[$k] = array(
-                    'name' => $this->fixUploadedFileName($files['name'][$k]),
-                    'type' => $files['type'][$k],
-                    'size' => $files['size'][$k],
-                    'error' => $files['error'][$k],
+                    'name' => $files['name'][$k],
+                    'type' => @$files['type'][$k],
+                    'size' => @$files['size'][$k],
+                    'error' => @$files['error'][$k],
                     'tmp_name' => $files['tmp_name'][$k]
                 );
             }
-            $files = $result;
-        // we have a single file
-        } elseif (isset($files['name'])) {
-            $files['name'] = $this->fixUploadedFileName($files['name']);
-            $result = array($files);
-        // we have a list of files which are in correct format
-        } elseif (isset($files[0]) && isset($files[0]['name'])) {
-            foreach ($files as $k => $file) {
-                $files[$k]['name'] = $this->fixUploadedFileName($file['name']);
-            }
-            $result = $files;
+            return $result;
         }
-        return $result;
+        
+        // we have a list of files which are in correct format
+        if (isset($files[0]) && isset($files[0]['name'])) {
+            return $files;
+        }
+        
+        // if we got here, the $file argument is wrong
+        return array();
     }
     
+    /**
+     * Fixes the name of the uploaded file by stripping away bad characters
+     * and replacing "invalid" characters with underscore _
+     * 
+     * @param string $name
+     * @return string
+     */
     protected function fixUploadedFileName($name) {
         $name = preg_replace('/[^a-z0-9\.]+/', '_', strtolower($name));
         return preg_replace('/[_]+/', '_', $name);

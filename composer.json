@@ -15,18 +15,17 @@
             "email": "adrian@adrianmiu.ro"
         }
     ],
-    "version": "dev-master",
-    "minimum-stability": "dev",
     "require": {
         "php": ">=5.4",
-        "siriusphp/validation": ">=1.0"
+        "siriusphp/validation": ">=1.1"
     },
     "require-dev": {
-    	"phpunit/phpunit": "dev-master",
+    	"phpunit/phpunit": "3.7",
         "satooshi/php-coveralls": "dev-master"
     },
     "suggest": {
-    	"frenkynet/flysystem": "If you need to upload to different destinations, not just to the local file system"
+    	"league/flysystem": "If you need to upload to different destinations, not just to the local file system",
+    	"knplabs/gaufrette": "Alternative filesystem abstraction"
     },
     "autoload": {
         "files": [

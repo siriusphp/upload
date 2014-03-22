@@ -17,18 +17,10 @@ interface UploadHandlerInterface {
     public function process($files = array());
     
     /**
-     * Returns the result of the upload operation
-     * It is the name of the file or a list of files as stored in the container
-     * 
-     * @return boolean|string|array
-     */
-    public function getResult();
-
-    /**
      * The file that was saved during process() and has a .lock file attached
      * will be cleared, in case the form processing fails
      * 
-     * @param string $file
+     * @param mixed $result
      */
     public function clear($file);
     
@@ -36,12 +28,8 @@ interface UploadHandlerInterface {
      * Remove the .lock file attached to the file that was saved during process()
      * This should happen if the form fails validation/processing
      *  
-     * @param string $file
+     * @param mixed $result
      */
-    public function confirm($file);
+    public function confirm($result);
     
-    /**
-     * Returns the error messages associatied with the upload operation
-     */
-    public function getMessages();
 }
