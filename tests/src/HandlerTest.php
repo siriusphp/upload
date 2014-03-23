@@ -183,4 +183,10 @@ class HandlerTest extends \PHPUnit_Framework_TestCase {
         $result = $this->handler->process(array('names' => 'abc.jpg'));
         $this->assertEquals(count($result), 0);
     }
+    
+    function testExceptionTrwonForInvalidContainer() {
+        $this->setExpectedException('Sirius\Upload\Exception\InvalidContainerException');
+        
+        $handler = new Handler(new \stdClass());
+    }
 }
