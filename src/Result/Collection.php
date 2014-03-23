@@ -23,9 +23,7 @@ class Collection implements \Iterator, \Countable {
     function getMessages() {
         $messages = array();
         foreach ($this->files as $key => $file) {
-            if (isset($file['messages'])) {
-                $messages[$key] = $file['messages'];
-            }
+            $messages[$key] = $file->getMessages();
         }
         return $messages;
     }

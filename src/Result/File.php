@@ -22,6 +22,5 @@ class File {
         if (isset($this->file[$name])) {
             return $this->file[$name];
         }
-        return null;
     }
 }

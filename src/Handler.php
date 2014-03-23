@@ -5,11 +5,21 @@ use Sirius\Upload\Container\ContainerInterface;
 use Sirius\Upload\Container\Local as LocalContainer;
 use Sirius\Upload\Exception\InvalidContainerException;
 use Sirius\Validation\ErrorMessage;
+use Sirius\Validation\ValueValidator;
 
 class Handler implements UploadHandlerInterface {
+    // constants for constructor options
     const OPTION_PREFIX = 'prefix';
     const OPTION_OVERWRITE = 'overwrite';
     const OPTION_AUTOCONFIRM = 'autoconfirm';
+    
+    // constants for validation rules
+    const RULE_EXTENSION = 'extension';
+    const RULE_SIZE = 'size';
+    const RULE_IMAGE = 'image';
+    const RULE_IMAGE_HEIGHT = 'imageheight';
+    const RULE_IMAGE_WIDTH = 'imagewidth';
+    const RULE_IMAGE_RATIO = 'imageratio';
     
     /**
      * @var ContainerInterface
@@ -39,6 +49,11 @@ class Handler implements UploadHandlerInterface {
      * @var boolean
      */
     protected $autoconfirm = false;
+    
+    /**
+     * @var Sirius\Validation\ValueValidator
+     */
+    protected $validator;
 
     function __construct($directoryOrContainer, ErrorMessage $errorMessagePrototype = null, $options = array()) {
         $container = $directoryOrContainer;
@@ -55,6 +70,10 @@ class Handler implements UploadHandlerInterface {
             $errorMessagePrototype = new ErrorMessage;
         }
         
+        // create the validator
+        $this->validator = new ValueValidator(null, $errorMessagePrototype);
+        
+        
         // set options
         $availableOptions = array(
         	static::OPTION_PREFIX => 'setPrefix',
@@ -68,19 +87,67 @@ class Handler implements UploadHandlerInterface {
         }
     }
     
+    /**
+     * Enable/disable upload overwrite
+     * 
+     * @param bool $overwrite
+     * @return \Sirius\Upload\Handler
+     */
     function setOverwrite($overwrite) {
     	$this->overwrite = (bool) $overwrite;
     	return $this;
     }
     
+    /**
+     * File prefix for the upload. Can be
+     * - a folder (if it ends with /)
+     * - a string to be used as prefix
+     * - a function that returns a string
+     * 
+     * @param string|callable $prefix
+     * @return \Sirius\Upload\Handler
+     */
     function setPrefix($prefix) {
     	$this->prefix = $prefix;
     	return $this;
     }
     
+    /**
+     * Enable/disable upload autoconfirmation
+     * Autoconfirmation does not require calling `confirm()`
+     * 
+     * @param boolean $autoconfirm
+     * @return \Sirius\Upload\Handler
+     */
     function setAutoconfirm($autoconfirm) {
     	$this->autoconfirm = (bool) $autoconfirm;
     	return $this;
+    }
+    
+    /**
+     * Add validation rule (extension|size|width|height|ratio)
+     * 
+     * @param string $name
+     * @param mixed $options
+     * @param string $errorMessageTemplate
+     * @param string $label
+     * @return \Sirius\Upload\Handler
+     */
+    function addRule($name, $options = null, $errorMessageTemplate = null, $label = null) {
+        $predefinedRules = array(
+        	static::RULE_EXTENSION,
+            static::RULE_IMAGE,
+            static::RULE_SIZE,
+            static::RULE_IMAGE_WIDTH,
+            static::RULE_IMAGE_HEIGHT,
+            static::RULE_IMAGE_RATIO
+        );
+        // convert to a name that is known by the default RuleFactory
+        if (in_array($name, $predefinedRules)) {
+            $name = 'upload' . $name;
+        }
+        $this->validator->add($name, $options, $errorMessageTemplate, $label);
+        return $this;
     }
     
     function process($files = array()) {
@@ -195,6 +262,9 @@ class Handler implements UploadHandlerInterface {
     }
     
     protected function validateFile($file) {
+        if (!$this->validator->validate($file)) {
+            $file['messages'] = $this->validator->getMessages();
+        }
         return $file;
     }
     

@@ -190,4 +190,46 @@ class HandlerTest extends \PHPUnit_Framework_TestCase {
         
         $handler = new Handler(new \stdClass());
     }
+    
+    function testSingleUploadValidation() {
+        $this->createTemporaryFile('abc.tmp', 'non image file');
+
+        // uploaded files must be an image
+        $this->handler->addRule(Handler::RULE_IMAGE);
+        
+        $result = $this->handler->process(array(
+            'name' => 'abc.jpg',
+            'tmp_name' => $this->tmpFolder . '/abc.tmp'
+        ));
+        
+        $this->assertFalse($result->isValid());
+        $this->assertEquals(count($result->getMessages()), 1);
+        $this->assertNull($result->nonAttribute);
+    }
+
+
+    function testMultiUploadValidation() {
+        $this->createTemporaryFile('abc.tmp', 'first_file');
+        $this->createTemporaryFile('def.tmp', 'second_file');
+        
+        // uploaded file must be an image
+        $this->handler->addRule(Handler::RULE_IMAGE);
+        
+        // array is as provided by PHP
+        $result = $this->handler->process(array(
+            'name' => array(
+                'abc.jpg',
+                'def.jpg',	
+            ),
+            'tmp_name' => array(
+                $this->tmpFolder . '/abc.tmp',
+                $this->tmpFolder . '/def.tmp'
+            ),
+        ));
+        $messages = $result->getMessages();
+        
+        $this->assertFalse($result->isValid());
+        $this->assertEquals(count($messages), 2);
+        $this->assertEquals(count($messages[0]), 1);
+    }
 }
