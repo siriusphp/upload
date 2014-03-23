@@ -215,7 +215,7 @@ class Handler implements UploadHandlerInterface {
         }
         
         // we have list of files, which PHP messes up
-        if (is_array($files['name'])) {
+        if (isset($files['name']) && is_array($files['name'])) {
             $result = array();
             foreach ($files['name'] as $k => $v) {
                 $result[$k] = array(
