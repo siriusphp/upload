@@ -20,8 +20,8 @@
         "siriusphp/validation": ">=1.1"
     },
     "require-dev": {
-    	"phpunit/phpunit": "3.7",
-        "satooshi/php-coveralls": "v0.6.1"
+    	"phpunit/phpunit": "dev-master",
+        "satooshi/php-coveralls": "dev-master"
     },
     "suggest": {
     	"league/flysystem": "If you need to upload to different destinations, not just to the local file system",
