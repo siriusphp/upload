@@ -6,7 +6,7 @@ class HandlerTest extends \PHPUnit_Framework_TestCase {
 	
     function setUp() {
         $this->tmpFolder = realpath(__DIR__ . '/../fixitures/');
-        mkdir($this->tmpFolder . '/container');
+        @mkdir($this->tmpFolder . '/container');
         $this->uploadFolder = realpath(__DIR__ . '/../fixitures/container/');
         $this->handler = new Handler($this->uploadFolder, null, array(
         	Handler::OPTION_PREFIX => '',
