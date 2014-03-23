@@ -1,6 +1,12 @@
 # Sirius\Upload
 
+[![Build Status](https://travis-ci.org/siriusphp/upload.svg?branch=master)](https://travis-ci.org/siriusphp/upload)
+[![Coverage Status](https://coveralls.io/repos/siriusphp/upload/badge.png?branch=master)](https://coveralls.io/r/siriusphp/upload?branch=master)
+[![Latest Stable Version](https://poser.pugx.org/siriusphp/upload/version.png)](https://packagist.org/packages/siriusphp/upload)
+[![License](https://poser.pugx.org/siriusphp/upload/license.png)](https://packagist.org/packages/siriusphp/upload)
+
 Framework agnostic upload handler library.
+
 
 ## Features
 
@@ -11,7 +17,7 @@ Framework agnostic upload handler library.
 
 ```php
 use Sirius\Upload\Handler as UploadHandler;
-$uploadHandler = new UploadHandler('/path/to/local_folder', 'subdirectory', false /* do not overwrite existing files in container*/);
+$uploadHandler = new UploadHandler('/path/to/local_folder');
 $uploadHandler->addRule('extension', ['allowed' => 'jpg', 'jpeg', 'png'], '{label} should be a valid image (jpg, jpeg, png)', 'Profile picture');
 $uploadHandler->addRule('filesize', ['max' => '20M'], '{label} should have less than {max}', 'Profile picture');
 $uploadHandler->addRule('imageratio', ['ratio' => 1], '{label} should be a sqare image', 'Profile picture');
