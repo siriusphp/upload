@@ -3,52 +3,36 @@
 namespace Sirius\Upload\Result;
 
 
-class Collection implements \Iterator, \Countable {
+class Collection extends \ArrayIterator {
     protected $current = 0;
-        
+
     protected $files = array();
-    
+
     function __construct($files) {
+        $filesArray = array();
         if (is_array($files)) {
             foreach ($files as $key => $file) {
-                $this->files[$key] = new File($file);
+                $filesArray[$key] = new File($file);
             }
         }
+        parent::__construct($filesArray);
     }
-    
+
     function isValid() {
-        return count($this->getMessages()) === 0;
+        foreach ($this->getMessages() as $key => $messages) {
+            if ($messages) {
+                return false;
+            }
+        }
+        return true;
     }
-    
+
     function getMessages() {
         $messages = array();
-        foreach ($this->files as $key => $file) {
+        foreach ($this as $key => $file) {
             $messages[$key] = $file->getMessages();
         }
         return $messages;
     }
-    
-    function current() {
-        return isset($this->files[$this->current]) ? $this->files[$this->current] : null;
-    }
-    
-    function key() {
-        return $this->current;
-    }
-    
-    function rewind() {
-        $this->current = 0;
-    }
-    
-    function valid() {
-        return isset($this->files[$this->current]);
-    }
-    
-    function next() {
-        ++$this->current;
-    }
-    
-    function count() {
-        return count($this->files);
-    }
+
 }
