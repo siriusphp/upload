@@ -8,12 +8,10 @@ php:
 before_script:
  - composer self-update
  - composer install --prefer-source --dev
-  
+
 script:
   - mkdir -p build/logs
-  - cd tests
   - phpunit
-  - cd ../
 
 after_script:
   - php vendor/bin/coveralls -v
