@@ -2,25 +2,91 @@
 
 namespace Sirius\Upload\Result;
 
-class File {
-    
+use Sirius\Upload\Container\ContainerInterface;
+
+class File
+{
+
+    /**
+     * Array containing the details of the uploaded file:
+     * - name (uploaded name)
+     * - original name
+     * - tmp_name
+     * etc
+     *
+     * @var array
+     */
     protected $file;
-    
-    function __construct($file) {
+
+    /**
+     * The container to which this file belongs to
+     * @var \Sirius\Upload\Container\ContainerInterface
+     */
+    protected $container;
+
+    /**
+     * @param $file
+     * @param ContainerInterface $container
+     */
+    function __construct($file, ContainerInterface $container)
+    {
         $this->file = $file;
+        $this->container = $container;
     }
-    
-    function isValid() {
-        return count($this->getMessages()) === 0;        
+
+    /**
+     * Returns if the uploaded file is valid
+     *
+     * @return bool
+     */
+    function isValid()
+    {
+        return $this->file['name'] && count($this->getMessages()) === 0;
     }
-    
-    function getMessages() {
-        return $this->file['messages'];
+
+    /**
+     * Returns the validation error messages
+     *
+     * @return array
+     */
+    function getMessages()
+    {
+        if (isset($this->file['messages'])) {
+            return $this->file['messages'];
+        } else {
+            return array();
+        }
     }
-    
-    function __get($name) {
+
+    /**
+     * The file that was saved during process() and has a .lock file attached
+     * will be cleared, in case the form processing fails
+     */
+    function clear() {
+        $this->container->delete($this->name);
+        $this->container->delete($this->name . '.lock');
+        $this->file['name'] = null;
+    }
+
+    /**
+     * Remove the .lock file attached to the file that was saved during process()
+     * This should happen if the form fails validation/processing
+     */
+    function confirm() {
+        $this->container->delete($this->name . '.lock');
+    }
+
+    /**
+     * File attribute getter
+     *
+     * @param $name
+     * @return mixed
+     */
+    function __get($name)
+    {
         if (isset($this->file[$name])) {
             return $this->file[$name];
         }
+        return null;
     }
 }

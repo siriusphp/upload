@@ -1,6 +1,6 @@
 {
     "name": "siriusphp/upload",
-    "description": "File upload handling library",
+    "description": "Framework agnostic upload library",
     "type": "library",
     "license": "MIT",
     "keywords": [
@@ -24,8 +24,8 @@
         "satooshi/php-coveralls": "dev-master"
     },
     "suggest": {
-    	"league/flysystem": "If you need to upload to different destinations, not just to the local file system",
-    	"knplabs/gaufrette": "Alternative filesystem abstraction"
+    	"league/flysystem": "To upload to different destinations, not just to the local file system",
+    	"knplabs/gaufrette": "Alternative filesystem abstraction library for upload destinations"
     },
     "autoload": {
         "files": [

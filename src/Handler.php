@@ -4,10 +4,12 @@ namespace Sirius\Upload;
 use Sirius\Upload\Container\ContainerInterface;
 use Sirius\Upload\Container\Local as LocalContainer;
 use Sirius\Upload\Exception\InvalidContainerException;
+use Sirius\Upload\Util\Arr;
 use Sirius\Validation\ErrorMessage;
 use Sirius\Validation\ValueValidator;
 
-class Handler implements UploadHandlerInterface {
+class Handler implements UploadHandlerInterface
+{
     // constants for constructor options
     const OPTION_PREFIX = 'prefix';
     const OPTION_OVERWRITE = 'overwrite';
@@ -55,12 +57,13 @@ class Handler implements UploadHandlerInterface {
      */
     protected $validator;
 
-    function __construct($directoryOrContainer, ErrorMessage $errorMessagePrototype = null, $options = array()) {
+    function __construct($directoryOrContainer, ErrorMessage $errorMessagePrototype = null, $options = array())
+    {
         $container = $directoryOrContainer;
-    	if (is_string($directoryOrContainer)) {
-    		$container = new LocalContainer($directoryOrContainer);
-    	}
-    	if (!$container instanceof ContainerInterface) {
+        if (is_string($directoryOrContainer)) {
+            $container = new LocalContainer($directoryOrContainer);
+        }
+        if (!$container instanceof ContainerInterface) {
             throw new InvalidContainerException('Destination container for uploaded files is not valid');
         }
         $this->container = $container;
@@ -76,7 +79,7 @@ class Handler implements UploadHandlerInterface {
 
         // set options
         $availableOptions = array(
-        	static::OPTION_PREFIX => 'setPrefix',
+            static::OPTION_PREFIX => 'setPrefix',
             static::OPTION_OVERWRITE => 'setOverwrite',
             static::OPTION_AUTOCONFIRM => 'setAutoconfirm'
         );
@@ -87,19 +90,16 @@ class Handler implements UploadHandlerInterface {
         }
     }
 
-    function setErrorMessagePrototype(ErrorMessage $errorMessagePrototype) {
-        $this->validator->setErrorMessagePrototype($errorMessagePrototype);
-    }
-
     /**
      * Enable/disable upload overwrite
      *
      * @param bool $overwrite
      * @return \Sirius\Upload\Handler
      */
-    function setOverwrite($overwrite) {
-    	$this->overwrite = (bool) $overwrite;
-    	return $this;
+    function setOverwrite($overwrite)
+    {
+        $this->overwrite = (bool)$overwrite;
+        return $this;
     }
 
     /**
@@ -111,9 +111,10 @@ class Handler implements UploadHandlerInterface {
      * @param string|callable $prefix
      * @return \Sirius\Upload\Handler
      */
-    function setPrefix($prefix) {
-    	$this->prefix = $prefix;
-    	return $this;
+    function setPrefix($prefix)
+    {
+        $this->prefix = $prefix;
+        return $this;
     }
 
     /**
@@ -123,9 +124,10 @@ class Handler implements UploadHandlerInterface {
      * @param boolean $autoconfirm
      * @return \Sirius\Upload\Handler
      */
-    function setAutoconfirm($autoconfirm) {
-    	$this->autoconfirm = (bool) $autoconfirm;
-    	return $this;
+    function setAutoconfirm($autoconfirm)
+    {
+        $this->autoconfirm = (bool)$autoconfirm;
+        return $this;
     }
 
     /**
@@ -137,9 +139,10 @@ class Handler implements UploadHandlerInterface {
      * @param string $label
      * @return \Sirius\Upload\Handler
      */
-    function addRule($name, $options = null, $errorMessageTemplate = null, $label = null) {
+    function addRule($name, $options = null, $errorMessageTemplate = null, $label = null)
+    {
         $predefinedRules = array(
-        	static::RULE_EXTENSION,
+            static::RULE_EXTENSION,
             static::RULE_IMAGE,
             static::RULE_SIZE,
             static::RULE_IMAGE_WIDTH,
@@ -154,66 +157,21 @@ class Handler implements UploadHandlerInterface {
         return $this;
     }
 
-    function process($files = array()) {
+    function process($files = array())
+    {
         $isSingle = isset($files['name']) && !is_array($files['name']);
 
-        $files = \Sirius\Upload\Util\Arr::normalizeFiles($files);
+        $files = Arr::normalizeFiles($files);
 
         foreach ($files as $k => $file) {
             $files[$k] = $this->processSingleFile($file);
         }
 
         if ($isSingle) {
-            return new Result\File($files[0]);
+            return new Result\File($files[0], $this->container);
         }
-        return new Result\Collection($files);
+        return new Result\Collection($files, $this->container);
     }
-
-    function clear($result) {
-        if ($result instanceof Result\Collection) {
-            return $this->clearCollection($result);
-        }
-        if ($result instanceof Result\File) {
-            return $this->clearFile($result);
-        }
-        throw new Exception\InvalidResultException('Result passed for clearing is not valid');
-    }
-
-    protected function clearFile(Result\File $file) {
-        $this->container->delete($file->name);
-        $this->container->delete($file->name . '.lock');
-        return true;
-    }
-
-    protected function clearCollection(Result\Collection $collection) {
-        foreach ($collection as $file) {
-            $this->clearFile($file);
-        }
-        return true;
-    }
-
-    function confirm($result) {
-        if ($result instanceof Result\Collection) {
-            return $this->confirmCollection($result);
-        }
-        if ($result instanceof Result\File) {
-            return $this->confirmFile($result);
-        }
-        throw new Exception\InvalidResultException('Result passed for confirmation is not valid');
-    }
-
-    protected function confirmFile(Result\File $file) {
-        $this->container->delete($file->name . '.lock');
-        return true;
-    }
-
-    protected function confirmCollection(Result\Collection $collection) {
-        foreach ($collection as $file) {
-            $this->confirmFile($file);
-        }
-        return true;
-    }
-
 
     /**
      * Processes a single uploaded file
@@ -224,7 +182,8 @@ class Handler implements UploadHandlerInterface {
      * @param array $file
      * @return array
      */
-    protected function processSingleFile(array $file) {
+    protected function processSingleFile(array $file)
+    {
         // store it for future reference
         $file['original_name'] = $file['name'];
 
@@ -240,9 +199,9 @@ class Handler implements UploadHandlerInterface {
         // add the prefix
         $prefix = '';
         if (is_callable($this->prefix)) {
-            $prefix = (string) call_user_func($this->prefix, $file['name']);
+            $prefix = (string)call_user_func($this->prefix, $file['name']);
         } elseif (is_string($this->prefix)) {
-            $prefix = (string) $this->prefix;
+            $prefix = (string)$this->prefix;
         }
 
         // if overwrite is not allowed, check if the file is already in the container
@@ -268,7 +227,8 @@ class Handler implements UploadHandlerInterface {
         return $file;
     }
 
-    protected function validateFile($file) {
+    protected function validateFile($file)
+    {
         if (!$this->validator->validate($file)) {
             $file['messages'] = $this->validator->getMessages();
         }
@@ -282,7 +242,8 @@ class Handler implements UploadHandlerInterface {
      * @param string $name
      * @return string
      */
-    protected function sanitizeFileName($name) {
+    protected function sanitizeFileName($name)
+    {
         $name = preg_replace('/[^a-z0-9\.]+/', '_', strtolower($name));
         return preg_replace('/[_]+/', '_', $name);
     }

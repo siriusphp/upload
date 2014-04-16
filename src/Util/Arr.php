@@ -5,7 +5,8 @@ namespace Sirius\Upload\Util;
 
 use Sirius\Validation\Utils;
 
-class Arr {
+class Arr
+{
 
     /**
      * Fixes the $_FILES array problem and ensures the result is an array of files
@@ -17,7 +18,8 @@ class Arr {
      * @param array $files
      * @return array
      */
-    static function normalizeFiles(array $files) {
+    static function normalizeFiles(array $files)
+    {
         // we have a single file
         if (isset($files['name']) && !is_array($files['name'])) {
             return array($files);
@@ -47,8 +49,9 @@ class Arr {
         return array();
     }
 
-    static function getBySelector($array, $selector) {
-        return Utils::arrayGetBySelector($array, $$selector);
+    static function getBySelector($array, $selector)
+    {
+        return Utils::arrayGetBySelector($array, $selector);
     }
 
 

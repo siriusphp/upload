@@ -2,39 +2,49 @@
 
 namespace Sirius\Upload;
 
-class HandlerTest extends \PHPUnit_Framework_TestCase {
+class HandlerTest extends \PHPUnit_Framework_TestCase
+{
 
-    function setUp() {
+    function setUp()
+    {
         $this->tmpFolder = realpath(__DIR__ . '/../fixitures/');
         @mkdir($this->tmpFolder . '/container');
         $this->uploadFolder = realpath(__DIR__ . '/../fixitures/container/');
-        $this->handler = new Handler($this->uploadFolder, null, array(
-        	Handler::OPTION_PREFIX => '',
-            Handler::OPTION_OVERWRITE => false,
-            Handler::OPTION_AUTOCONFIRM => false
-        ));
+        $this->handler = new Handler(
+            $this->uploadFolder, null, array(
+                Handler::OPTION_PREFIX => '',
+                Handler::OPTION_OVERWRITE => false,
+                Handler::OPTION_AUTOCONFIRM => false
+            )
+        );
     }
 
-    function tearDown() {
+    function tearDown()
+    {
         $files = glob($this->uploadFolder . '/*'); // get all file names
-        foreach($files as $file){ // iterate files
-            if(is_file($file))
-                unlink($file); // delete file
+        foreach ($files as $file) { // iterate files
+            if (is_file($file)) {
+                unlink($file);
+            } // delete file
         }
     }
 
-    function createTemporaryFile($name, $content = "") {
-        file_put_contents($this->tmpFolder. '/' . $name, $content);
+    function createTemporaryFile($name, $content = "")
+    {
+        file_put_contents($this->tmpFolder . '/' . $name, $content);
     }
 
-    function testBasicUploadWithPrefix() {
+    function testBasicUploadWithPrefix()
+    {
         $this->handler->setPrefix('subfolder/');
         $this->createTemporaryFile('abc.tmp');
 
-        $result = $this->handler->process(array(
-        	'name' => 'abc.jpg',
-            'tmp_name' => $this->tmpFolder . '/abc.tmp'
-        ));
+        $result = $this->handler->process(
+            array(
+                'name' => 'abc.jpg',
+                'tmp_name' => $this->tmpFolder . '/abc.tmp'
+            )
+        );
 
         $this->assertTrue(file_exists($this->uploadFolder . '/' . $result->name));
         $this->assertTrue(file_exists($this->uploadFolder . '/' . $result->name . '.lock'));
@@ -43,13 +53,16 @@ class HandlerTest extends \PHPUnit_Framework_TestCase {
         unlink($this->uploadFolder . '/' . $result->name . '.lock');
     }
 
-    function testUploadOverwrite() {
+    function testUploadOverwrite()
+    {
         $this->createTemporaryFile('abc.tmp', 'first_file');
 
-        $result = $this->handler->process(array(
-            'name' => 'abc.jpg',
-            'tmp_name' => $this->tmpFolder . '/abc.tmp'
-        ));
+        $result = $this->handler->process(
+            array(
+                'name' => 'abc.jpg',
+                'tmp_name' => $this->tmpFolder . '/abc.tmp'
+            )
+        );
 
         $this->assertEquals(file_get_contents($this->uploadFolder . '/abc.jpg'), 'first_file');
 
@@ -57,10 +70,12 @@ class HandlerTest extends \PHPUnit_Framework_TestCase {
         $this->handler->setOverwrite(false);
         $this->createTemporaryFile('abc.tmp', 'second_file');
 
-        $result = $this->handler->process(array(
-            'name' => 'abc.jpg',
-            'tmp_name' => $this->tmpFolder . '/abc.tmp'
-        ));
+        $result = $this->handler->process(
+            array(
+                'name' => 'abc.jpg',
+                'tmp_name' => $this->tmpFolder . '/abc.tmp'
+            )
+        );
 
         $this->assertEquals(file_get_contents($this->uploadFolder . '/abc.jpg'), 'first_file');
 
@@ -68,74 +83,90 @@ class HandlerTest extends \PHPUnit_Framework_TestCase {
         $this->handler->setOverwrite(true);
         $this->createTemporaryFile('abc.tmp', 'second_file');
 
-        $result = $this->handler->process(array(
-            'name' => 'abc.jpg',
-            'tmp_name' => $this->tmpFolder . '/abc.tmp'
-        ));
+        $result = $this->handler->process(
+            array(
+                'name' => 'abc.jpg',
+                'tmp_name' => $this->tmpFolder . '/abc.tmp'
+            )
+        );
 
         $this->assertEquals(file_get_contents($this->uploadFolder . '/abc.jpg'), 'second_file');
     }
 
-    function testUploadAutoconfirm() {
+    function testUploadAutoconfirm()
+    {
         $this->handler->setAutoconfirm(true);
         $this->createTemporaryFile('abc.tmp', 'first_file');
 
-        $result = $this->handler->process(array(
-            'name' => 'abc.jpg',
-            'tmp_name' => $this->tmpFolder . '/abc.tmp'
-        ));
+        $result = $this->handler->process(
+            array(
+                'name' => 'abc.jpg',
+                'tmp_name' => $this->tmpFolder . '/abc.tmp'
+            )
+        );
 
         $this->assertTrue(file_exists($this->uploadFolder . '/' . $result->name));
         $this->assertFalse(file_exists($this->uploadFolder . '/' . $result->name . '.lock'));
     }
 
-    function testSingleUploadConfirmation() {
+    function testSingleUploadConfirmation()
+    {
         $this->createTemporaryFile('abc.tmp', 'first_file');
 
-        $result = $this->handler->process(array(
-            'name' => 'abc.jpg',
-            'tmp_name' => $this->tmpFolder . '/abc.tmp'
-        ));
+        $result = $this->handler->process(
+            array(
+                'name' => 'abc.jpg',
+                'tmp_name' => $this->tmpFolder . '/abc.tmp'
+            )
+        );
 
         $this->assertTrue(file_exists($this->uploadFolder . '/' . $result->name));
         $this->assertTrue(file_exists($this->uploadFolder . '/' . $result->name . '.lock'));
 
-        $this->handler->confirm($result);
+        $result->confirm();
         $this->assertFalse(file_exists($this->uploadFolder . '/' . $result->name . '.lock'));
     }
 
 
-    function testSingleUploadClearing() {
+    function testSingleUploadClearing()
+    {
         $this->createTemporaryFile('abc.tmp', 'first_file');
 
-        $result = $this->handler->process(array(
-            'name' => 'abc.jpg',
-            'tmp_name' => $this->tmpFolder . '/abc.tmp'
-        ));
+        $result = $this->handler->process(
+            array(
+                'name' => 'abc.jpg',
+                'tmp_name' => $this->tmpFolder . '/abc.tmp'
+            )
+        );
 
         $this->assertTrue(file_exists($this->uploadFolder . '/' . $result->name));
         $this->assertTrue(file_exists($this->uploadFolder . '/' . $result->name . '.lock'));
 
-        $this->handler->clear($result);
-        $this->assertFalse(file_exists($this->uploadFolder . '/' . $result->name));
-        $this->assertFalse(file_exists($this->uploadFolder . '/' . $result->name . '.lock'));
+        $fileName = $result->name;
+        $result->clear();
+
+        $this->assertFalse(file_exists($this->uploadFolder . '/' . $fileName));
+        $this->assertFalse(file_exists($this->uploadFolder . '/' . $fileName . '.lock'));
     }
 
-    function testMultiUpload() {
+    function testMultiUpload()
+    {
         $this->createTemporaryFile('abc.tmp', 'first_file');
         $this->createTemporaryFile('def.tmp', 'first_file');
 
         // array is already properly formated
-        $result = $this->handler->process(array(
+        $result = $this->handler->process(
             array(
-                'name' => 'abc.jpg',
-                'tmp_name' => $this->tmpFolder . '/abc.tmp'
-            ),
-            array(
-                'name' => 'def.jpg',
-                'tmp_name' => $this->tmpFolder . '/def.tmp'
+                array(
+                    'name' => 'abc.jpg',
+                    'tmp_name' => $this->tmpFolder . '/abc.tmp'
+                ),
+                array(
+                    'name' => 'def.jpg',
+                    'tmp_name' => $this->tmpFolder . '/def.tmp'
+                )
             )
-        ));
+        );
 
         $this->assertTrue($result->isValid());
 
@@ -146,34 +177,37 @@ class HandlerTest extends \PHPUnit_Framework_TestCase {
         }
 
         // confirmation removes the .lock files
-        $this->handler->confirm($result);
+        $result->confirm();
         foreach ($result as $file) {
             $this->assertTrue(file_exists($this->uploadFolder . '/' . $file->name));
             $this->assertFalse(file_exists($this->uploadFolder . '/' . $file->name . '.lock'));
         }
 
         // clearing removes the uploaded files and their locks (which are already removed)
-        $this->handler->clear($result);
+        $result->clear();
         foreach ($result as $file) {
-            $this->assertFalse(file_exists($this->uploadFolder . '/' . $file->name));
+            $this->assertNull($file->name);
         }
     }
 
-    function testOriginalMultiUpload() {
+    function testOriginalMultiUpload()
+    {
         $this->createTemporaryFile('abc.tmp', 'first_file');
         $this->createTemporaryFile('def.tmp', 'first_file');
 
         // array is as provided by PHP
-        $result = $this->handler->process(array(
-            'name' => array(
-                'abc.jpg',
-                'def.jpg',
-            ),
-            'tmp_name' => array(
-                $this->tmpFolder . '/abc.tmp',
-                $this->tmpFolder . '/def.tmp'
-            ),
-        ));
+        $result = $this->handler->process(
+            array(
+                'name' => array(
+                    'abc.jpg',
+                    'def.jpg',
+                ),
+                'tmp_name' => array(
+                    $this->tmpFolder . '/abc.tmp',
+                    $this->tmpFolder . '/def.tmp'
+                ),
+            )
+        );
 
         $this->assertEquals(count($result), 2);
         foreach ($result as $file) {
@@ -182,27 +216,32 @@ class HandlerTest extends \PHPUnit_Framework_TestCase {
         }
     }
 
-    function testWrongFilesArray() {
+    function testWrongFilesArray()
+    {
         $result = $this->handler->process(array('names' => 'abc.jpg'));
         $this->assertEquals(count($result), 0);
     }
 
-    function testExceptionTrwonForInvalidContainer() {
+    function testExceptionTrwonForInvalidContainer()
+    {
         $this->setExpectedException('Sirius\Upload\Exception\InvalidContainerException');
 
         $handler = new Handler(new \stdClass());
     }
 
-    function testSingleUploadValidation() {
+    function testSingleUploadValidation()
+    {
         $this->createTemporaryFile('abc.tmp', 'non image file');
 
         // uploaded files must be an image
         $this->handler->addRule(Handler::RULE_IMAGE);
 
-        $result = $this->handler->process(array(
-            'name' => 'abc.jpg',
-            'tmp_name' => $this->tmpFolder . '/abc.tmp'
-        ));
+        $result = $this->handler->process(
+            array(
+                'name' => 'abc.jpg',
+                'tmp_name' => $this->tmpFolder . '/abc.tmp'
+            )
+        );
 
         $this->assertFalse($result->isValid());
         $this->assertEquals(count($result->getMessages()), 1);
@@ -210,7 +249,8 @@ class HandlerTest extends \PHPUnit_Framework_TestCase {
     }
 
 
-    function testMultiUploadValidation() {
+    function testMultiUploadValidation()
+    {
         $this->createTemporaryFile('abc.tmp', 'first_file');
         $this->createTemporaryFile('def.tmp', 'second_file');
 
@@ -218,16 +258,18 @@ class HandlerTest extends \PHPUnit_Framework_TestCase {
         $this->handler->addRule(Handler::RULE_IMAGE);
 
         // array is as provided by PHP
-        $result = $this->handler->process(array(
-            'name' => array(
-                'abc.jpg',
-                'def.jpg',
-            ),
-            'tmp_name' => array(
-                $this->tmpFolder . '/abc.tmp',
-                $this->tmpFolder . '/def.tmp'
-            ),
-        ));
+        $result = $this->handler->process(
+            array(
+                'name' => array(
+                    'abc.jpg',
+                    'def.jpg',
+                ),
+                'tmp_name' => array(
+                    $this->tmpFolder . '/abc.tmp',
+                    $this->tmpFolder . '/def.tmp'
+                ),
+            )
+        );
         $messages = $result->getMessages();
 
         $this->assertFalse($result->isValid());

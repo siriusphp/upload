@@ -36,10 +36,40 @@ if ($result->isValid()) {
 	try {
 		$profile->picture = $result->name;
 		$profile->save();
-		$uploadHandler->confirm($result); // this will remove the uploaded file and it's .lock file
+		$result->confirm(); // this will remove the uploaded file and it's .lock file
 	} catch (\Exception $e) {
-		// something wrong happend, we don't need the uploaded picture anymore
-		$uploadHandler->clear($result);
+		// something wrong happened, we don't need the uploaded picture anymore
+		$result->clear();
+		throw $e;
+	}
+} else {
+	// image was not moved to the container, where are error messages
+	$messages = $result->getMessages();
+}
+```
+
+## One aggregator to rule them all
+
+Sometimes your form may upload multiple files to the server. To reduce the number of `process()`, `clear()` and `confirm()` calls you can use an "upload handler aggregate"
+
+```php
+use Sirius\Upload\HandlerAggregate as UploadHandlerAggregate;
+$uploadHandlerAggregate = new UploadHandlerAggregate();
+$uploadHandlerAggregate->addHandler('picture', $previouslyCreatedUploadHandlerForTheProfilePicture);
+$uploadHandlerAggregate->addHandler('resume', $previouslyCreatedUploadHandlerForTheResume);
+
+$result = $uploadHandlerAggregate->process($_FILES);
+
+if ($result->isValid()) {
+	// do something with the image like attaching it to a model etc
+	try {
+		$profile->picture = $result['picture']->name;
+		$profile->resume = $result['resume']->name;
+		$profile->save();
+		$result->confirm(); // this will remove the uploaded file and it's .lock file
+	} catch (\Exception $e) {
+		// something wrong happened, we don't need the uploaded files anymore
+		$result->clear();
 		throw $e;
 	}
 } else {
@@ -50,9 +80,9 @@ if ($result->isValid()) {
 
 ## How it works
 
-1. Uploaded file is validated agains the rules. By default the library will check if the upload is valid (ie: no errors during upload)
+1. Uploaded file is validated against the rules. By default the library will check if the upload is valid (ie: no errors during upload)
 2. The name of the uploaded file is sanitized (keep only letters, numbers and underscore and lowercase the result). You may implement your own sanitization function if you want.
-3. If overwrite is not allowed, and a file with the same name already exists in the container, the library tries to find an avaiable file name based on the original file name.
+3. If overwrite is not allowed, and a file with the same name already exists in the container, the library will prepend the timestamp to the filename.
 4. Moves the uploaded file to the container. It also create a lock file (filename + '.lock') so that we know the upload is not confirmed
 5. If something wrong happens in your app and you want to get rid of the uploaded file you can `clear()` the uploaded file which will remove the file and its `.lock` file. Only files that have a coresponding `.lock` file attached can be cleared
 6. If everything is in order you can `confirm` the upload. This will remove the `.lock` file attached to the upload file.
@@ -78,7 +108,7 @@ You can easily create upload containers on top of [Gaufrette](https://github.com
 
 ## Important notes
 
-##### 1. The library makes no assumptions about the "web availability" of the uploaded file. 
+##### 1. The library makes no assumptions about the "web availability" of the uploaded file.
 
 Most of the times once you have a valid upload the new file will be reachable on the internet. You may upload your files to `/var/www/public/images/users/` and have the files accessible at `//cdn.domain.com/users/`. It's up to you to make your app work with the result of the upload.
 

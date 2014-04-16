@@ -2,4 +2,6 @@
 
 namespace Sirius\Upload\Exception;
 
-class InvalidResultException extends \RuntimeException {}
+class InvalidResultException extends \RuntimeException
+{
+}

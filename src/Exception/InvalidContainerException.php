@@ -2,4 +2,6 @@
 
 namespace Sirius\Upload\Exception;
 
-class InvalidContainerException extends \RuntimeException {}
+class InvalidContainerException extends \RuntimeException
+{
+}

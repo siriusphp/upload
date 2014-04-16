@@ -2,23 +2,35 @@
 
 namespace Sirius\Upload\Result;
 
+use Sirius\Upload\Container\ContainerInterface;
 
-class Collection extends \ArrayIterator {
-    protected $current = 0;
-
-    protected $files = array();
-
-    function __construct($files) {
+class Collection extends \ArrayIterator
+{
+    function __construct($files = array(), ContainerInterface $container = null)
+    {
         $filesArray = array();
-        if (is_array($files)) {
+        if (is_array($files) && !empty($files)) {
             foreach ($files as $key => $file) {
-                $filesArray[$key] = new File($file);
+                $filesArray[$key] = new File($file, $container);
             }
         }
         parent::__construct($filesArray);
     }
 
-    function isValid() {
+    function clear() {
+        foreach ($this as $file) {
+            $file->clear();
+        }
+    }
+
+    function confirm() {
+        foreach ($this as $file) {
+            $file->confirm();
+        }
+    }
+
+    function isValid()
+    {
         foreach ($this->getMessages() as $key => $messages) {
             if ($messages) {
                 return false;
@@ -27,7 +39,8 @@ class Collection extends \ArrayIterator {
         return true;
     }
 
-    function getMessages() {
+    function getMessages()
+    {
         $messages = array();
         foreach ($this as $key => $file) {
             $messages[$key] = $file->getMessages();

@@ -2,44 +2,35 @@
 namespace Sirius\Upload;
 
 
+use Sirius\Upload\Result\Collection;
 use Sirius\Upload\Util\Arr;
-use Sirius\Validation\ErrorMessage;
 
-class HandlerAggregate implements \IteratorAggregate{
+class HandlerAggregate implements \IteratorAggregate
+{
 
     protected $handlers = array();
 
-    function addHandler($selector, Handler $handler) {
-        $handler->setErrorMessagePrototype
+    function addHandler($selector, Handler $handler)
+    {
         $this->handlers[$selector] = $handler;
         return $this;
     }
 
-    function removeHandler($selector) {
-        if (isset($this->handlers[$selector])) {
-            unset($this->handlers[$selector]);
-        }
-        return $this;
-    }
-
-    function removeHandlers() {
-        $this->handlers = array();
-        return $this;
-    }
-
-
-    function process($files) {
-        $result = array();
+    function process($files)
+    {
+        $result = new Collection();
         foreach ($this->handlers as $selector => $handler) {
             /* @var $handler Handler */
             $selectedFiles = Arr::getBySelector($files, $selector);
 
-            if (!is_array($selectedFiles) || empty($selectedFiles)) {
+            if (!$selectedFiles || !is_array($selectedFiles) || empty($selectedFiles)) {
                 continue;
             }
 
             foreach ($selectedFiles as $path => $file) {
-                $result[$path] = $handler->proces($file);
+                if (is_array($file)) {
+                    $result[$path] = $handler->process($file);
+                }
             }
         }
 
