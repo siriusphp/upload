@@ -19,19 +19,21 @@ class Collection extends \ArrayIterator
 
     function clear() {
         foreach ($this as $file) {
+            /* @var $file \Sirius\Upload\Result\File */
             $file->clear();
         }
     }
 
     function confirm() {
         foreach ($this as $file) {
+            /* @var $file \Sirius\Upload\Result\File */
             $file->confirm();
         }
     }
 
     function isValid()
     {
-        foreach ($this->getMessages() as $key => $messages) {
+        foreach ($this->getMessages() as $messages) {
             if ($messages) {
                 return false;
             }
@@ -43,6 +45,7 @@ class Collection extends \ArrayIterator
     {
         $messages = array();
         foreach ($this as $key => $file) {
+            /* @var $file \Sirius\Upload\Result\File */
             $messages[$key] = $file->getMessages();
         }
         return $messages;

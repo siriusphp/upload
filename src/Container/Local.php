@@ -55,7 +55,6 @@ class Local implements ContainerInterface
      */
     public function save($file, $content)
     {
-        $subdirectory = '';
         $file = $this->normalizePath($file);
         $dir = dirname($this->baseDirectory . $file);
         if ($this->ensureDirectory($dir)) {
