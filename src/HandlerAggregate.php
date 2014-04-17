@@ -10,12 +10,24 @@ class HandlerAggregate implements \IteratorAggregate
 
     protected $handlers = array();
 
+    /**
+     * Adds a handler on the aggregate
+     *
+     * @param string $selector
+     * @param Handler $handler
+     * @return $this
+     */
     function addHandler($selector, Handler $handler)
     {
         $this->handlers[$selector] = $handler;
         return $this;
     }
 
+    /**
+     * Processes
+     * @param $files
+     * @return Collection
+     */
     function process($files)
     {
         $result = new Collection();

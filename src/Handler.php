@@ -57,6 +57,12 @@ class Handler implements UploadHandlerInterface
      */
     protected $validator;
 
+    /**
+     * @param $directoryOrContainer
+     * @param ErrorMessage $errorMessagePrototype
+     * @param array $options
+     * @throws Exception\InvalidContainerException
+     */
     function __construct($directoryOrContainer, ErrorMessage $errorMessagePrototype = null, $options = array())
     {
         $container = $directoryOrContainer;
@@ -157,6 +163,12 @@ class Handler implements UploadHandlerInterface
         return $this;
     }
 
+    /**
+     * Processes a file upload and returns an upload result file/collection
+     *
+     * @param array $files
+     * @return Result\Collection|Result\File
+     */
     function process($files = array())
     {
         $isSingle = isset($files['name']) && !is_array($files['name']);
@@ -227,6 +239,12 @@ class Handler implements UploadHandlerInterface
         return $file;
     }
 
+    /**
+     * Validates a file according to the rules configured on the handler
+     *
+     * @param $file
+     * @return mixed
+     */
     protected function validateFile($file)
     {
         if (!$this->validator->validate($file)) {
