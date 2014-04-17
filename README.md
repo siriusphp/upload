@@ -78,6 +78,8 @@ if ($result->isValid()) {
 }
 ```
 
+You can see the aggregator and handlers in action in the [tests/web/index.php](/siriusphp/upload/blob/master/tests/fixitures/sample_file.jpg)
+
 ## How it works
 
 1. Uploaded file is validated against the rules. By default the library will check if the upload is valid (ie: no errors during upload)
@@ -128,4 +130,3 @@ array(
 
 In this case the library normalizes the `$_FILES` array as PHP messes up the upload array.
 It is up to you to decide what you want to do when some files fail to upload (eg: keep the valid files and continue or display error messages for the invalid images)
-
