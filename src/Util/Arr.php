@@ -3,9 +3,7 @@
 namespace Sirius\Upload\Util;
 
 
-use Sirius\Validation\Utils;
-
-class Arr
+class Arr extends \Sirius\Validation\Util\Arr
 {
 
     /**
@@ -48,11 +46,5 @@ class Arr
         // if we got here, the $file argument is wrong
         return array();
     }
-
-    static function getBySelector($array, $selector)
-    {
-        return Utils::arrayGetBySelector($array, $selector);
-    }
-
 
 }
