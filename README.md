@@ -27,7 +27,7 @@ $uploadHandler->setAutoconfirm(false); // disable automatic confirmation (defaul
 
 // validation rules
 $uploadHandler->addRule('extension', ['allowed' => 'jpg', 'jpeg', 'png'], '{label} should be a valid image (jpg, jpeg, png)', 'Profile picture');
-$uploadHandler->addRule('filesize', ['max' => '20M'], '{label} should have less than {max}', 'Profile picture');
+$uploadHandler->addRule('size', ['max' => '20M'], '{label} should have less than {max}', 'Profile picture');
 $uploadHandler->addRule('imageratio', ['ratio' => 1], '{label} should be a sqare image', 'Profile picture');
 
 $result = $uploadHandler->process($_FILES['picture']); // ex: subdirectory/my_headshot.png
