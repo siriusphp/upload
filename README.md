@@ -37,9 +37,9 @@ if ($result->isValid()) {
 	try {
 		$profile->picture = $result->name;
 		$profile->save();
-		$result->confirm(); // this will remove the uploaded file and it's .lock file
+		$result->confirm(); // this will remove the .lock file
 	} catch (\Exception $e) {
-		// something wrong happened, we don't need the uploaded picture anymore
+		// something wrong happened, we don't need the uploaded files anymore
 		$result->clear();
 		throw $e;
 	}
@@ -67,7 +67,7 @@ if ($result->isValid()) {
 		$profile->picture = $result['picture']->name;
 		$profile->resume = $result['resume']->name;
 		$profile->save();
-		$result->confirm(); // this will remove the uploaded file and it's .lock file
+		$result->confirm(); // this will remove the .lock files
 	} catch (\Exception $e) {
 		// something wrong happened, we don't need the uploaded files anymore
 		$result->clear();
