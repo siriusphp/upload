@@ -262,7 +262,6 @@ class Handler implements UploadHandlerInterface
      */
     protected function sanitizeFileName($name)
     {
-        $name = preg_replace('/[^a-z0-9\.]+/', '_', strtolower($name));
-        return preg_replace('/[_]+/', '_', $name);
+        return preg_replace('/[^A-Za-z0-9\.]+/', '_', $name);
     }
 }

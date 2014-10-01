@@ -84,18 +84,20 @@ You can see the aggregator and handlers in action in the [tests/web/index.php](/
 ## How it works
 
 1. Uploaded file is validated against the rules. By default the library will check if the upload is valid (ie: no errors during upload)
-2. The name of the uploaded file is sanitized (keep only letters, numbers and underscore and lowercase the result). You may implement your own sanitization function if you want.
+2. The name of the uploaded file is sanitized (keep only letters, numbers and underscore). You may implement your own sanitization function if you want.
 3. If overwrite is not allowed, and a file with the same name already exists in the container, the library will prepend the timestamp to the filename.
 4. Moves the uploaded file to the container. It also create a lock file (filename + '.lock') so that we know the upload is not confirmed
-5. If something wrong happens in your app and you want to get rid of the uploaded file you can `clear()` the uploaded file which will remove the file and its `.lock` file. Only files that have a coresponding `.lock` file attached can be cleared
+5. If something wrong happens in your app and you want to get rid of the uploaded file you can `clear()` the uploaded file which will remove the file and its `.lock` file. Only files that have a corresponding `.lock` file attached can be cleared
 6. If everything is in order you can `confirm` the upload. This will remove the `.lock` file attached to the upload file.
 
 #### What is "locking"?
 
-Usualy application accept file uploads to store them for future use (product images, people resumes etc). But from the time an uploaded file is moved to its container until the actual data is saved there are things that can go wrong (eg: the database goes down).
-For this reason the `locking` functionality was implemented. This way, even if you're not able to execute the `clear()` method you will be able to look into the container in "spot" the unused files. This feature must be used with care
+Usually, an application accepts file uploads to store them for future use (product images, people resumes etc). But from the time an uploaded file is moved to its container (the folder on disk, an S3 bucket) until the actual data is saved there are things that can go wrong (eg: the database goes down and the uploaded image cannot be attached to a model).
+The `locking` functionality was implemented for this reason. So, whenever a file is uploaded, on the same location another file with the `.lock` extension is created. This file is removed when the upload is confirmed.
 
-1. If you want to take advantage of this feature you must use `confirm`
+Worst case scenario (when the system breaks down so you cannot execute the `clear()` method) you will be able to look into the container in "spot" the unused files. This feature must be used with care:
+
+1. If you want to take advantage of this feature you must use `confirm` or you will end up with `.lock` files everywhere.
 2. If you don't like it, use `$uploadHandler->setAutoconfirm(true)` and all uploaded files will automatically confirmed
 
 ## Using different containers
@@ -130,4 +132,4 @@ array(
 ```
 
 In this case the library normalizes the `$_FILES` array as PHP messes up the upload array.
-It is up to you to decide what you want to do when some files fail to upload (eg: keep the valid files and continue or display error messages for the invalid images)
+It is up to you to decide what you want to do when some files fail to upload (eg: keep the valid files and discard the failed image or display error messages for the invalid images)
