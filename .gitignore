@@ -6,3 +6,4 @@ build/
 /composer.lock
 .idea
 atlassian-ide-plugin.xml
+tests/fixitures/
