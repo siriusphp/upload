@@ -2,7 +2,6 @@
 
 namespace Sirius\Upload\Util;
 
-
 class Arr extends \Sirius\Validation\Util\Arr
 {
 

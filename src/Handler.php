@@ -82,7 +82,6 @@ class Handler implements UploadHandlerInterface
         // create the validator
         $this->validator = new ValueValidator(null, $errorMessagePrototype);
 
-
         // set options
         $availableOptions = array(
             static::OPTION_PREFIX => 'setPrefix',

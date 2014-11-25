@@ -1,7 +1,6 @@
 <?php
 namespace Sirius\Upload;
 
-
 use Sirius\Upload\Result\Collection;
 use Sirius\Upload\Util\Arr;
 
