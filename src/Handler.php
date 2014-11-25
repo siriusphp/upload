@@ -76,7 +76,7 @@ class Handler implements UploadHandlerInterface
 
         // create the error message prototype if it does not exist
         if (!$errorMessagePrototype) {
-            $errorMessagePrototype = new ErrorMessage;
+            $errorMessagePrototype = new ErrorMessage();
         }
 
         // create the validator
