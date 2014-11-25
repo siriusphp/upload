@@ -20,6 +20,7 @@ class HandlerAggregate implements \IteratorAggregate
     public function addHandler($selector, Handler $handler)
     {
         $this->handlers[$selector] = $handler;
+
         return $this;
     }
 

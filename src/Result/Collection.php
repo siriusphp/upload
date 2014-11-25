@@ -38,6 +38,7 @@ class Collection extends \ArrayIterator
                 return false;
             }
         }
+
         return true;
     }
 
@@ -48,6 +49,7 @@ class Collection extends \ArrayIterator
             /* @var $file \Sirius\Upload\Result\File */
             $messages[$key] = $file->getMessages();
         }
+
         return $messages;
     }
 

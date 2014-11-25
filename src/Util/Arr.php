@@ -35,6 +35,7 @@ class Arr extends \Sirius\Validation\Util\Arr
                     'tmp_name' => $files['tmp_name'][$k]
                 );
             }
+
             return $result;
         }
 

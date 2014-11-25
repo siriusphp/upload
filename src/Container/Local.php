@@ -16,6 +16,7 @@ class Local implements ContainerInterface
     protected function normalizePath($path)
     {
         $path = dirname(rtrim($path, '\\/') . DIRECTORY_SEPARATOR . 'xxx');
+
         return rtrim($path, DIRECTORY_SEPARATOR);
     }
 
@@ -24,6 +25,7 @@ class Local implements ContainerInterface
         if (!is_dir($directory)) {
             mkdir($directory, 0766, true);
         }
+
         return is_dir($directory) && $this->isWritable();
     }
 
@@ -60,6 +62,7 @@ class Local implements ContainerInterface
         if ($this->ensureDirectory($dir)) {
             return (bool)file_put_contents($this->baseDirectory . $file, $content);
         }
+
         return false;
     }
 
@@ -75,6 +78,7 @@ class Local implements ContainerInterface
         if (file_exists($this->baseDirectory . $file)) {
             return unlink($this->baseDirectory . $file);
         }
+
         return true;
     }
 
@@ -93,6 +97,7 @@ class Local implements ContainerInterface
                 return move_uploaded_file($localFile, $this->baseDirectory . $destination);
             }
         }
+
         return false;
     }
 

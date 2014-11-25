@@ -105,6 +105,7 @@ class Handler implements UploadHandlerInterface
     public function setOverwrite($overwrite)
     {
         $this->overwrite = (bool)$overwrite;
+
         return $this;
     }
 
@@ -120,6 +121,7 @@ class Handler implements UploadHandlerInterface
     public function setPrefix($prefix)
     {
         $this->prefix = $prefix;
+
         return $this;
     }
 
@@ -133,6 +135,7 @@ class Handler implements UploadHandlerInterface
     public function setAutoconfirm($autoconfirm)
     {
         $this->autoconfirm = (bool)$autoconfirm;
+
         return $this;
     }
 
@@ -160,6 +163,7 @@ class Handler implements UploadHandlerInterface
             $name = 'upload' . $name;
         }
         $this->validator->add($name, $options, $errorMessageTemplate, $label);
+
         return $this;
     }
 
@@ -182,6 +186,7 @@ class Handler implements UploadHandlerInterface
         if ($isSingle) {
             return new Result\File($files[0], $this->container);
         }
+
         return new Result\Collection($files, $this->container);
     }
 
@@ -228,6 +233,7 @@ class Handler implements UploadHandlerInterface
         // attempt to move the uploaded file into the container
         if (!$this->container->moveUploadedFile($file['tmp_name'], $prefix . $file['name'])) {
             $file['name'] = false;
+
             return $file;
         }
 
@@ -236,6 +242,7 @@ class Handler implements UploadHandlerInterface
         if (!$this->autoconfirm) {
             $this->container->save($file['name'] . '.lock', time());
         }
+
         return $file;
     }
 
@@ -250,6 +257,7 @@ class Handler implements UploadHandlerInterface
         if (!$this->validator->validate($file)) {
             $file['messages'] = $this->validator->getMessages();
         }
+
         return $file;
     }
 
