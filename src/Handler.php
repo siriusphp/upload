@@ -104,7 +104,7 @@ class Handler implements UploadHandlerInterface
      */
     public function setOverwrite($overwrite)
     {
-        $this->overwrite = (bool)$overwrite;
+        $this->overwrite = (bool) $overwrite;
 
         return $this;
     }
@@ -134,7 +134,7 @@ class Handler implements UploadHandlerInterface
      */
     public function setAutoconfirm($autoconfirm)
     {
-        $this->autoconfirm = (bool)$autoconfirm;
+        $this->autoconfirm = (bool) $autoconfirm;
 
         return $this;
     }
@@ -216,9 +216,9 @@ class Handler implements UploadHandlerInterface
         // add the prefix
         $prefix = '';
         if (is_callable($this->prefix)) {
-            $prefix = (string)call_user_func($this->prefix, $file['name']);
+            $prefix = (string) call_user_func($this->prefix, $file['name']);
         } elseif (is_string($this->prefix)) {
-            $prefix = (string)$this->prefix;
+            $prefix = (string) $this->prefix;
         }
 
         // if overwrite is not allowed, check if the file is already in the container

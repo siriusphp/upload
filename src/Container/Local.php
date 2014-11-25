@@ -60,7 +60,7 @@ class Local implements ContainerInterface
         $file = $this->normalizePath($file);
         $dir = dirname($this->baseDirectory . $file);
         if ($this->ensureDirectory($dir)) {
-            return (bool)file_put_contents($this->baseDirectory . $file, $content);
+            return (bool) file_put_contents($this->baseDirectory . $file, $content);
         }
 
         return false;
