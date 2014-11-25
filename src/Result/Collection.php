@@ -17,14 +17,16 @@ class Collection extends \ArrayIterator
         parent::__construct($filesArray);
     }
 
-    public function clear() {
+    public function clear()
+    {
         foreach ($this as $file) {
             /* @var $file \Sirius\Upload\Result\File */
             $file->clear();
         }
     }
 
-    public function confirm() {
+    public function confirm()
+    {
         foreach ($this as $file) {
             /* @var $file \Sirius\Upload\Result\File */
             $file->confirm();

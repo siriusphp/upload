@@ -62,7 +62,8 @@ class File
      * The file that was saved during process() and has a .lock file attached
      * will be cleared, in case the form processing fails
      */
-    public function clear() {
+    public function clear()
+    {
         $this->container->delete($this->name);
         $this->container->delete($this->name . '.lock');
         $this->file['name'] = null;
@@ -72,7 +73,8 @@ class File
      * Remove the .lock file attached to the file that was saved during process()
      * This should happen if the form fails validation/processing
      */
-    public function confirm() {
+    public function confirm()
+    {
         $this->container->delete($this->name . '.lock');
     }
 
