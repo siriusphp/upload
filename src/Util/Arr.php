@@ -12,7 +12,7 @@ class Arr extends \Sirius\Validation\Util\Arr
      * multiple files are uploaded under the same name
      * @see http://www.php.net/manual/en/features.file-upload.php
      *
-     * @param array $files
+     * @param  array $files
      * @return array
      */
     public static function normalizeFiles(array $files)

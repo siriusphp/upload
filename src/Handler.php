@@ -59,8 +59,8 @@ class Handler implements UploadHandlerInterface
 
     /**
      * @param $directoryOrContainer
-     * @param ErrorMessage $errorMessagePrototype
-     * @param array $options
+     * @param  ErrorMessage                        $errorMessagePrototype
+     * @param  array                               $options
      * @throws Exception\InvalidContainerException
      */
     public function __construct($directoryOrContainer, ErrorMessage $errorMessagePrototype = null, $options = array())
@@ -98,7 +98,7 @@ class Handler implements UploadHandlerInterface
     /**
      * Enable/disable upload overwrite
      *
-     * @param bool $overwrite
+     * @param  bool                   $overwrite
      * @return \Sirius\Upload\Handler
      */
     public function setOverwrite($overwrite)
@@ -114,7 +114,7 @@ class Handler implements UploadHandlerInterface
      * - a string to be used as prefix
      * - a function that returns a string
      *
-     * @param string|callable $prefix
+     * @param  string|callable        $prefix
      * @return \Sirius\Upload\Handler
      */
     public function setPrefix($prefix)
@@ -128,7 +128,7 @@ class Handler implements UploadHandlerInterface
      * Enable/disable upload autoconfirmation
      * Autoconfirmation does not require calling `confirm()`
      *
-     * @param boolean $autoconfirm
+     * @param  boolean                $autoconfirm
      * @return \Sirius\Upload\Handler
      */
     public function setAutoconfirm($autoconfirm)
@@ -141,10 +141,10 @@ class Handler implements UploadHandlerInterface
     /**
      * Add validation rule (extension|size|width|height|ratio)
      *
-     * @param string $name
-     * @param mixed $options
-     * @param string $errorMessageTemplate
-     * @param string $label
+     * @param  string                 $name
+     * @param  mixed                  $options
+     * @param  string                 $errorMessageTemplate
+     * @param  string                 $label
      * @return \Sirius\Upload\Handler
      */
     public function addRule($name, $options = null, $errorMessageTemplate = null, $label = null)
@@ -169,7 +169,7 @@ class Handler implements UploadHandlerInterface
     /**
      * Processes a file upload and returns an upload result file/collection
      *
-     * @param array $files
+     * @param  array                         $files
      * @return Result\Collection|Result\File
      */
     public function process($files = array())
@@ -195,7 +195,7 @@ class Handler implements UploadHandlerInterface
      * - validates the file
      * - if valid, moves the file to the container
      *
-     * @param array $file
+     * @param  array $file
      * @return array
      */
     protected function processSingleFile(array $file)
@@ -264,7 +264,7 @@ class Handler implements UploadHandlerInterface
      * Sanitize the name of the uploaded file by stripping away bad characters
      * and replacing "invalid" characters with underscore _
      *
-     * @param string $name
+     * @param  string $name
      * @return string
      */
     protected function sanitizeFileName($name)

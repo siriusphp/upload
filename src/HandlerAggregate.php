@@ -12,8 +12,8 @@ class HandlerAggregate implements \IteratorAggregate
     /**
      * Adds a handler on the aggregate
      *
-     * @param string $selector
-     * @param Handler $handler
+     * @param  string  $selector
+     * @param  Handler $handler
      * @return $this
      */
     public function addHandler($selector, Handler $handler)
@@ -55,7 +55,7 @@ class HandlerAggregate implements \IteratorAggregate
      *
      * @link http://php.net/manual/en/iteratoraggregate.getiterator.php
      * @return \Traversable An instance of an object implementing <b>Iterator</b> or
-     *       <b>Traversable</b>
+     *                      <b>Traversable</b>
      */
     public function getIterator()
     {

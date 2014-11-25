@@ -40,7 +40,7 @@ class Local implements ContainerInterface
     /**
      * This will check if a file is in the container
      *
-     * @param string $file
+     * @param  string $file
      * @return bool
      */
     public function has($file)
@@ -51,8 +51,8 @@ class Local implements ContainerInterface
     /**
      * Saves the $content string as a file
      *
-     * @param string $file
-     * @param string $content
+     * @param  string $file
+     * @param  string $content
      * @return bool
      */
     public function save($file, $content)
@@ -69,7 +69,7 @@ class Local implements ContainerInterface
     /**
      * Delete the file from the container
      *
-     * @param string $file
+     * @param  string $file
      * @return bool
      */
     public function delete($file)
@@ -85,8 +85,8 @@ class Local implements ContainerInterface
     /**
      * Moves a temporary uploaded file to a destination in the container
      *
-     * @param string $localFile local path
-     * @param string $destination
+     * @param  string $localFile   local path
+     * @param  string $destination
      * @return bool
      */
     public function moveUploadedFile($localFile, $destination)

@@ -35,7 +35,7 @@ interface ContainerInterface
     /**
      * Moves a temporary uploaded file to a destination in the container
      *
-     * @param string $localFile local path
+     * @param string $localFile   local path
      * @param string $destination
      */
     public function moveUploadedFile($localFile, $destination);
