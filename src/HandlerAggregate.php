@@ -17,7 +17,7 @@ class HandlerAggregate implements \IteratorAggregate
      * @param Handler $handler
      * @return $this
      */
-    function addHandler($selector, Handler $handler)
+    public function addHandler($selector, Handler $handler)
     {
         $this->handlers[$selector] = $handler;
         return $this;
@@ -28,7 +28,7 @@ class HandlerAggregate implements \IteratorAggregate
      * @param $files
      * @return Collection
      */
-    function process($files)
+    public function process($files)
     {
         $result = new Collection();
         foreach ($this->handlers as $selector => $handler) {

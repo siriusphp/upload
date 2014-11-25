@@ -7,7 +7,7 @@ class Local implements ContainerInterface
 
     protected $baseDirectory;
 
-    function __construct($baseDirectory)
+    public function __construct($baseDirectory)
     {
         $this->baseDirectory = $this->normalizePath($baseDirectory) . DIRECTORY_SEPARATOR;
         $this->ensureDirectory($this->baseDirectory);

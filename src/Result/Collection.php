@@ -6,7 +6,7 @@ use Sirius\Upload\Container\ContainerInterface;
 
 class Collection extends \ArrayIterator
 {
-    function __construct($files = array(), ContainerInterface $container = null)
+    public function __construct($files = array(), ContainerInterface $container = null)
     {
         $filesArray = array();
         if (is_array($files) && !empty($files)) {
@@ -17,21 +17,21 @@ class Collection extends \ArrayIterator
         parent::__construct($filesArray);
     }
 
-    function clear() {
+    public function clear() {
         foreach ($this as $file) {
             /* @var $file \Sirius\Upload\Result\File */
             $file->clear();
         }
     }
 
-    function confirm() {
+    public function confirm() {
         foreach ($this as $file) {
             /* @var $file \Sirius\Upload\Result\File */
             $file->confirm();
         }
     }
 
-    function isValid()
+    public function isValid()
     {
         foreach ($this->getMessages() as $messages) {
             if ($messages) {
@@ -41,7 +41,7 @@ class Collection extends \ArrayIterator
         return true;
     }
 
-    function getMessages()
+    public function getMessages()
     {
         $messages = array();
         foreach ($this as $key => $file) {

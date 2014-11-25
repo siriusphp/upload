@@ -28,7 +28,7 @@ class File
      * @param $file
      * @param ContainerInterface $container
      */
-    function __construct($file, ContainerInterface $container)
+    public function __construct($file, ContainerInterface $container)
     {
         $this->file = $file;
         $this->container = $container;
@@ -39,7 +39,7 @@ class File
      *
      * @return bool
      */
-    function isValid()
+    public function isValid()
     {
         return $this->file['name'] && count($this->getMessages()) === 0;
     }
@@ -49,7 +49,7 @@ class File
      *
      * @return array
      */
-    function getMessages()
+    public function getMessages()
     {
         if (isset($this->file['messages'])) {
             return $this->file['messages'];
@@ -62,7 +62,7 @@ class File
      * The file that was saved during process() and has a .lock file attached
      * will be cleared, in case the form processing fails
      */
-    function clear() {
+    public function clear() {
         $this->container->delete($this->name);
         $this->container->delete($this->name . '.lock');
         $this->file['name'] = null;
@@ -72,7 +72,7 @@ class File
      * Remove the .lock file attached to the file that was saved during process()
      * This should happen if the form fails validation/processing
      */
-    function confirm() {
+    public function confirm() {
         $this->container->delete($this->name . '.lock');
     }
 
@@ -82,7 +82,7 @@ class File
      * @param $name
      * @return mixed
      */
-    function __get($name)
+    public function __get($name)
     {
         if (isset($this->file[$name])) {
             return $this->file[$name];

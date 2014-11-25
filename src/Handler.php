@@ -63,7 +63,7 @@ class Handler implements UploadHandlerInterface
      * @param array $options
      * @throws Exception\InvalidContainerException
      */
-    function __construct($directoryOrContainer, ErrorMessage $errorMessagePrototype = null, $options = array())
+    public function __construct($directoryOrContainer, ErrorMessage $errorMessagePrototype = null, $options = array())
     {
         $container = $directoryOrContainer;
         if (is_string($directoryOrContainer)) {
@@ -102,7 +102,7 @@ class Handler implements UploadHandlerInterface
      * @param bool $overwrite
      * @return \Sirius\Upload\Handler
      */
-    function setOverwrite($overwrite)
+    public function setOverwrite($overwrite)
     {
         $this->overwrite = (bool)$overwrite;
         return $this;
@@ -117,7 +117,7 @@ class Handler implements UploadHandlerInterface
      * @param string|callable $prefix
      * @return \Sirius\Upload\Handler
      */
-    function setPrefix($prefix)
+    public function setPrefix($prefix)
     {
         $this->prefix = $prefix;
         return $this;
@@ -130,7 +130,7 @@ class Handler implements UploadHandlerInterface
      * @param boolean $autoconfirm
      * @return \Sirius\Upload\Handler
      */
-    function setAutoconfirm($autoconfirm)
+    public function setAutoconfirm($autoconfirm)
     {
         $this->autoconfirm = (bool)$autoconfirm;
         return $this;
@@ -145,7 +145,7 @@ class Handler implements UploadHandlerInterface
      * @param string $label
      * @return \Sirius\Upload\Handler
      */
-    function addRule($name, $options = null, $errorMessageTemplate = null, $label = null)
+    public function addRule($name, $options = null, $errorMessageTemplate = null, $label = null)
     {
         $predefinedRules = array(
             static::RULE_EXTENSION,
@@ -169,7 +169,7 @@ class Handler implements UploadHandlerInterface
      * @param array $files
      * @return Result\Collection|Result\File
      */
-    function process($files = array())
+    public function process($files = array())
     {
         $isSingle = isset($files['name']) && !is_array($files['name']);
 

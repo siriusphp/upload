@@ -16,7 +16,7 @@ class Arr extends \Sirius\Validation\Util\Arr
      * @param array $files
      * @return array
      */
-    static function normalizeFiles(array $files)
+    public static function normalizeFiles(array $files)
     {
         // we have a single file
         if (isset($files['name']) && !is_array($files['name'])) {
