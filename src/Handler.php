@@ -64,11 +64,11 @@ class Handler implements UploadHandlerInterface
 
     /**
      * @param $directoryOrContainer
-     * @param ErrorMessage $errorMessagePrototype
-     * @param array $options
+     * @param  ErrorMessage                        $errorMessagePrototype
+     * @param  array                               $options
      * @throws Exception\InvalidContainerException
      */
-    function __construct($directoryOrContainer, ErrorMessage $errorMessagePrototype = null, $options = array())
+    public function __construct($directoryOrContainer, ErrorMessage $errorMessagePrototype = null, $options = array())
     {
         $container = $directoryOrContainer;
         if (is_string($directoryOrContainer)) {
@@ -81,12 +81,11 @@ class Handler implements UploadHandlerInterface
 
         // create the error message prototype if it does not exist
         if (!$errorMessagePrototype) {
-            $errorMessagePrototype = new ErrorMessage;
+            $errorMessagePrototype = new ErrorMessage();
         }
 
         // create the validator
         $this->validator = new ValueValidator(null, $errorMessagePrototype);
-
 
         // set options
         $availableOptions = array(
@@ -104,12 +103,13 @@ class Handler implements UploadHandlerInterface
     /**
      * Enable/disable upload overwrite
      *
-     * @param bool $overwrite
+     * @param  bool                   $overwrite
      * @return \Sirius\Upload\Handler
      */
-    function setOverwrite($overwrite)
+    public function setOverwrite($overwrite)
     {
-        $this->overwrite = (bool)$overwrite;
+        $this->overwrite = (bool) $overwrite;
+
         return $this;
     }
 
@@ -119,12 +119,13 @@ class Handler implements UploadHandlerInterface
      * - a string to be used as prefix
      * - a function that returns a string
      *
-     * @param string|callable $prefix
+     * @param  string|callable        $prefix
      * @return \Sirius\Upload\Handler
      */
-    function setPrefix($prefix)
+    public function setPrefix($prefix)
     {
         $this->prefix = $prefix;
+
         return $this;
     }
 
@@ -132,12 +133,13 @@ class Handler implements UploadHandlerInterface
      * Enable/disable upload autoconfirmation
      * Autoconfirmation does not require calling `confirm()`
      *
-     * @param boolean $autoconfirm
+     * @param  boolean                $autoconfirm
      * @return \Sirius\Upload\Handler
      */
-    function setAutoconfirm($autoconfirm)
+    public function setAutoconfirm($autoconfirm)
     {
-        $this->autoconfirm = (bool)$autoconfirm;
+        $this->autoconfirm = (bool) $autoconfirm;
+
         return $this;
     }
     
@@ -160,13 +162,13 @@ class Handler implements UploadHandlerInterface
     /**
      * Add validation rule (extension|size|width|height|ratio)
      *
-     * @param string $name
-     * @param mixed $options
-     * @param string $errorMessageTemplate
-     * @param string $label
+     * @param  string                 $name
+     * @param  mixed                  $options
+     * @param  string                 $errorMessageTemplate
+     * @param  string                 $label
      * @return \Sirius\Upload\Handler
      */
-    function addRule($name, $options = null, $errorMessageTemplate = null, $label = null)
+    public function addRule($name, $options = null, $errorMessageTemplate = null, $label = null)
     {
         $predefinedRules = array(
             static::RULE_EXTENSION,
@@ -181,16 +183,17 @@ class Handler implements UploadHandlerInterface
             $name = 'upload' . $name;
         }
         $this->validator->add($name, $options, $errorMessageTemplate, $label);
+
         return $this;
     }
 
     /**
      * Processes a file upload and returns an upload result file/collection
      *
-     * @param array $files
+     * @param  array                         $files
      * @return Result\Collection|Result\File
      */
-    function process($files = array())
+    public function process($files = array())
     {
         $isSingle = isset($files['name']) && !is_array($files['name']);
 
@@ -203,6 +206,7 @@ class Handler implements UploadHandlerInterface
         if ($isSingle) {
             return new Result\File($files[0], $this->container);
         }
+
         return new Result\Collection($files, $this->container);
     }
 
@@ -212,7 +216,7 @@ class Handler implements UploadHandlerInterface
      * - validates the file
      * - if valid, moves the file to the container
      *
-     * @param array $file
+     * @param  array $file
      * @return array
      */
     protected function processSingleFile(array $file)
@@ -232,9 +236,9 @@ class Handler implements UploadHandlerInterface
         // add the prefix
         $prefix = '';
         if (is_callable($this->prefix)) {
-            $prefix = (string)call_user_func($this->prefix, $file['name']);
+            $prefix = (string) call_user_func($this->prefix, $file['name']);
         } elseif (is_string($this->prefix)) {
-            $prefix = (string)$this->prefix;
+            $prefix = (string) $this->prefix;
         }
 
         // if overwrite is not allowed, check if the file is already in the container
@@ -249,6 +253,7 @@ class Handler implements UploadHandlerInterface
         // attempt to move the uploaded file into the container
         if (!$this->container->moveUploadedFile($file['tmp_name'], $prefix . $file['name'])) {
             $file['name'] = false;
+
             return $file;
         }
 
@@ -257,6 +262,7 @@ class Handler implements UploadHandlerInterface
         if (!$this->autoconfirm) {
             $this->container->save($file['name'] . '.lock', time());
         }
+
         return $file;
     }
 
@@ -271,6 +277,7 @@ class Handler implements UploadHandlerInterface
         if (!$this->validator->validate($file)) {
             $file['messages'] = $this->validator->getMessages();
         }
+
         return $file;
     }
 
@@ -278,7 +285,7 @@ class Handler implements UploadHandlerInterface
      * Sanitize the name of the uploaded file by stripping away bad characters
      * and replacing "invalid" characters with underscore _
      *
-     * @param string $name
+     * @param  string $name
      * @return string
      */
     protected function sanitizeFileName($name)
