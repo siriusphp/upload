@@ -30,6 +30,11 @@ $uploadHandler->addRule('extension', ['allowed' => 'jpg', 'jpeg', 'png'], '{labe
 $uploadHandler->addRule('size', ['max' => '20M'], '{label} should have less than {max}', 'Profile picture');
 $uploadHandler->addRule('imageratio', ['ratio' => 1], '{label} should be a sqare image', 'Profile picture');
 
+// file name sanitizer, if you don't like the default one which is: preg_replace('/[^A-Za-z0-9\.]+/', '_', $name))
+$uploadHandler->setSanitizerCallback(function($name){
+	return mktime() . preg_replace('/[^a-z0-9\.]+/', '-', strtolower($name));
+});
+
 $result = $uploadHandler->process($_FILES['picture']); // ex: subdirectory/my_headshot.png
 
 if ($result->isValid()) {

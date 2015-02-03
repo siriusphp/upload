@@ -56,6 +56,11 @@ class Handler implements UploadHandlerInterface
      * @var \Sirius\Validation\ValueValidator
      */
     protected $validator;
+    
+    /**
+     * @var function|callback
+     */
+    protected $sanitizerCallback;
 
     /**
      * @param $directoryOrContainer
@@ -133,6 +138,22 @@ class Handler implements UploadHandlerInterface
     function setAutoconfirm($autoconfirm)
     {
         $this->autoconfirm = (bool)$autoconfirm;
+        return $this;
+    }
+    
+    /**
+     * Set the sanitizer function for cleaning up the file names
+     * 
+     * @param callable $callback
+     * @throws \InvalidArgumentException
+     * @return \Sirius\Upload\Handler
+     */
+    function setSanitizerCallback($callback)
+    {
+        if (!is_callable($callback)) {
+            throw new \InvalidArgumentException('The $callback parameter is not a valid callable entity');
+        }
+        $this->sanitizerCallback = $callback;
         return $this;
     }
 
@@ -262,6 +283,9 @@ class Handler implements UploadHandlerInterface
      */
     protected function sanitizeFileName($name)
     {
+        if ($this->sanitizerCallback) {
+            return call_user_func($this->sanitizerCallback, $name);
+        }
         return preg_replace('/[^A-Za-z0-9\.]+/', '_', $name);
     }
 }

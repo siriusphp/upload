@@ -276,4 +276,28 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(count($messages), 2);
         $this->assertEquals(count($messages[0]), 1);
     }
+
+    function testCustomSanitizationCallback()
+    {
+        $this->handler->setSanitizerCallback(function($name) {
+        	return preg_replace('/[^A-Za-z0-9\.]+/', '-', strtolower($name));
+        });
+        $this->createTemporaryFile('ABC 123.tmp', 'non image file');
+    
+        $result = $this->handler->process(
+            array(
+                'name' => 'ABC 123.tmp',
+                'tmp_name' => $this->tmpFolder . '/ABC 123.tmp'
+            )
+        );
+        
+        $this->assertTrue(file_exists($this->uploadFolder . '/abc-123.tmp'));
+    }
+    
+    function testExceptionThrownForInvalidSanitizationCallback() {
+        $this->setExpectedException('InvalidArgumentException');
+        $this->handler->setSanitizerCallback('not a callable');
+    }
+    
+    
 }
