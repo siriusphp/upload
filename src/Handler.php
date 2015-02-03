@@ -58,6 +58,13 @@ class Handler implements UploadHandlerInterface
     protected $validator;
 
     /**
+     * The character replacement used in sanitizing file names
+     *
+     * @var string
+     */
+    private $substitute = '_';
+
+    /**
      * @param $directoryOrContainer
      * @param  ErrorMessage                        $errorMessagePrototype
      * @param  array                               $options
@@ -190,6 +197,15 @@ class Handler implements UploadHandlerInterface
     }
 
     /**
+     *
+     * @param unknown $char
+     */
+    public function setSubstitute($char)
+    {
+        $this->substitute = $char;
+    }
+
+    /**
      * Processes a single uploaded file
      * - sanitize the name
      * - validates the file
@@ -269,6 +285,6 @@ class Handler implements UploadHandlerInterface
      */
     protected function sanitizeFileName($name)
     {
-        return preg_replace('/[^A-Za-z0-9\.]+/', '_', $name);
+        return preg_replace('/[^A-Za-z0-9\.]+/', $this->substitute, $name);
     }
 }
