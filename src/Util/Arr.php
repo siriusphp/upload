@@ -2,7 +2,6 @@
 
 namespace Sirius\Upload\Util;
 
-
 class Arr extends \Sirius\Validation\Util\Arr
 {
 
@@ -13,10 +12,10 @@ class Arr extends \Sirius\Validation\Util\Arr
      * multiple files are uploaded under the same name
      * @see http://www.php.net/manual/en/features.file-upload.php
      *
-     * @param array $files
+     * @param  array $files
      * @return array
      */
-    static function normalizeFiles(array $files)
+    public static function normalizeFiles(array $files)
     {
         // we have a single file
         if (isset($files['name']) && !is_array($files['name'])) {
@@ -35,6 +34,7 @@ class Arr extends \Sirius\Validation\Util\Arr
                     'tmp_name' => $files['tmp_name'][$k]
                 );
             }
+
             return $result;
         }
 

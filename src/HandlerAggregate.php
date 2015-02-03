@@ -1,7 +1,6 @@
 <?php
 namespace Sirius\Upload;
 
-
 use Sirius\Upload\Result\Collection;
 use Sirius\Upload\Util\Arr;
 
@@ -13,13 +12,14 @@ class HandlerAggregate implements \IteratorAggregate
     /**
      * Adds a handler on the aggregate
      *
-     * @param string $selector
-     * @param Handler $handler
+     * @param  string  $selector
+     * @param  Handler $handler
      * @return $this
      */
-    function addHandler($selector, Handler $handler)
+    public function addHandler($selector, Handler $handler)
     {
         $this->handlers[$selector] = $handler;
+
         return $this;
     }
 
@@ -28,7 +28,7 @@ class HandlerAggregate implements \IteratorAggregate
      * @param $files
      * @return Collection
      */
-    function process($files)
+    public function process($files)
     {
         $result = new Collection();
         foreach ($this->handlers as $selector => $handler) {
@@ -55,7 +55,7 @@ class HandlerAggregate implements \IteratorAggregate
      *
      * @link http://php.net/manual/en/iteratoraggregate.getiterator.php
      * @return \Traversable An instance of an object implementing <b>Iterator</b> or
-     *       <b>Traversable</b>
+     *                      <b>Traversable</b>
      */
     public function getIterator()
     {
