@@ -1,0 +1,68 @@
+template:
+    url: https://github.com/siriusphp/Template-ReadTheDocs
+
+# List of directories to exclude from the processing (default contains "vendor" and "website")
+# Paths are relative to the repository root
+exclude:
+    - website
+    - vendor
+    - test
+    - src
+    - build
+
+# Base URL of the published website (no "/" at the end!)
+# You are advised to set and use this variable to write your links in the HTML layouts
+baseUrl: http://www.sirius.ro/php/sirius/upload
+
+projectName: Sirius\Upload
+title: Sirius\Upload
+subTitle: Framework agnostic upload library
+
+# The left menu bar
+menu:
+    sections:
+#        versions:
+#            name: Versions
+#            items:
+#                two:
+#                    text: "2.0"
+#                    relativeUrl:
+#                one:
+#                    text: "1.0"
+#                    relativeUrl: 1_0/
+        guide:
+            name: Getting started
+            items:
+                getting_started:
+                    text: Introduction
+                    relativeUrl:
+                installation:
+                    text: Installation
+                    relativeUrl: installation.html
+                simple_example:
+                    text: Simple example
+                    relativeUrl: simple_example.html
+                validators:
+                    text: Validation rules
+                    relativeUrl: validation_rules.html
+                aggregator:
+                    text: Upload aggregator
+                    relativeUrl: upload_aggregator.html
+        advanced:
+            name: Advanced topics
+            items:
+                file_locking:
+                    text: File locking
+                    relativeUrl: file_locking.html
+                options:
+                    text: Upload options
+                    relativeUrl: upload_options.html
+        cookbook:
+            name: Cookbook
+            items:
+                cloud_upload:
+                    text: Uploads into the cloud
+                    relativeUrl: cloud_upload.html
+                custom_validation:
+                    text: Custom validation
+                    relativeUrl: custom_validation.html

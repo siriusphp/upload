@@ -3,10 +3,9 @@
 .buildpath
 .project
 build/
-tests/
+tests/fixitures/
 vendor/
 composer.lock
 atlassian-ide-plugin.xml
 docs/couscous.phar
-docs/couscous.yml
 docs/.couscous/
