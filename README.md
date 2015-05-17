@@ -47,5 +47,5 @@ if ($result->isValid()) {
 
 ##Links
 
-- [documentation](http://www.sirius.ro/php/sirius/upload)
+- [documentation](http://www.sirius.ro/php/sirius/upload/)
 - [changelog](CHANGELOG.md)

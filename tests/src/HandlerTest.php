@@ -11,7 +11,7 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
         @mkdir($this->tmpFolder . '/container');
         $this->uploadFolder = realpath(__DIR__ . '/../fixitures/container/');
         $this->handler = new Handler(
-            $this->uploadFolder, null, array(
+            $this->uploadFolder, array(
                 Handler::OPTION_PREFIX => '',
                 Handler::OPTION_OVERWRITE => false,
                 Handler::OPTION_AUTOCONFIRM => false

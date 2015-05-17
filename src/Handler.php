@@ -64,11 +64,11 @@ class Handler implements UploadHandlerInterface
 
     /**
      * @param $directoryOrContainer
-     * @param  ErrorMessage                        $errorMessagePrototype
      * @param  array                               $options
-     * @throws Exception\InvalidContainerException
+     * @param  ValueValidator                      $validator
+     * @throws InvalidContainerException
      */
-    public function __construct($directoryOrContainer, ErrorMessage $errorMessagePrototype = null, $options = array())
+    public function __construct($directoryOrContainer, $options = array(), ValueValidator $validator = null)
     {
         $container = $directoryOrContainer;
         if (is_string($directoryOrContainer)) {
@@ -79,13 +79,11 @@ class Handler implements UploadHandlerInterface
         }
         $this->container = $container;
 
-        // create the error message prototype if it does not exist
-        if (!$errorMessagePrototype) {
-            $errorMessagePrototype = new ErrorMessage();
-        }
-
         // create the validator
-        $this->validator = new ValueValidator(null, $errorMessagePrototype);
+        if (!$validator) {
+            $validator = new ValueValidator();
+        }
+        $this->validator = $validator;
 
         // set options
         $availableOptions = array(

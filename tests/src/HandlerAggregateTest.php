@@ -26,7 +26,7 @@ class HandlerAggregateTest extends \PHPUnit_Framework_TestCase
         $this->agg->addHandler(
             'user_picture',
             new Handler(
-                $this->uploadFolder . '/user_picture', null, array(
+                $this->uploadFolder . '/user_picture', array(
                     Handler::OPTION_PREFIX => '',
                     Handler::OPTION_OVERWRITE => false,
                     Handler::OPTION_AUTOCONFIRM => false
@@ -36,7 +36,7 @@ class HandlerAggregateTest extends \PHPUnit_Framework_TestCase
         $this->agg->addHandler(
             'resume',
             new Handler(
-                $this->uploadFolder . '/resume', null, array(
+                $this->uploadFolder . '/resume', array(
                     Handler::OPTION_PREFIX => '',
                     Handler::OPTION_OVERWRITE => false,
                     Handler::OPTION_AUTOCONFIRM => false
@@ -46,7 +46,7 @@ class HandlerAggregateTest extends \PHPUnit_Framework_TestCase
         $this->agg->addHandler(
             'portfolio[photos]',
             new Handler(
-                $this->uploadFolder . '/photo', null, array(
+                $this->uploadFolder . '/photo', array(
                     Handler::OPTION_PREFIX => '',
                     Handler::OPTION_OVERWRITE => false,
                     Handler::OPTION_AUTOCONFIRM => false
