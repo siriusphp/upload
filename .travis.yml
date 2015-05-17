@@ -18,6 +18,7 @@ before_script:
 
 script:
   - mkdir -p build/logs
+  - cd tests
   - phpunit
 
 after_script:

@@ -22,7 +22,6 @@ $uploadHandler->addRule('callback', array('callback' => 'check_user_quota'), 'So
 You can inject a `Sirius\Validation\ValueValidator` upon construction. The example below assumes there is a dependency injection container.
 
 ```php
-
 $ruleFactory = $container->get('Sirius\Validation\RuleFactory');
 $ruleFactory->register('quota_is_met', 'MyApp\Validation\Rule\FileQuota');
 
