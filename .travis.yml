@@ -20,7 +20,7 @@ before_script:
 script:
   - mkdir -p build/logs
   - cd tests
-  - phpunit
+  - php ..\vendor\phpunit\phpunit\phpunit
 
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar
