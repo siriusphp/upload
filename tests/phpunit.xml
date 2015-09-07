@@ -5,9 +5,9 @@
         <log type="coverage-html" target="../build/coverage/"/>
     </logging>
     <filter>
-   	  <blacklist>
-          <directory suffix=".php">../vendor/</directory>
-	  </blacklist>
+        <whitelist addUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">../src/</directory>
+        </whitelist>
 	</filter>
     <testsuites>
         <testsuite name="Sirius Upload Test Suite">
