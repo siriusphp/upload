@@ -12,6 +12,7 @@ matrix:
     allow_failures:
         - php: 5.3
         - php: hhvm
+    fast_finish: true
 
 before_script:
  - composer self-update
@@ -19,9 +20,11 @@ before_script:
 
 script:
   - mkdir -p build/logs
+  - mkdir -p build/coverage
   - cd tests
   - php ../vendor/phpunit/phpunit/phpunit
+  - cd ../
 
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar
-  - php ocular.phar code-coverage:upload --format=php-clover ../build/logs/clover.xml
+  - if [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml; fi
