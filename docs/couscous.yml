@@ -13,6 +13,8 @@ exclude:
 # Base URL of the published website (no "/" at the end!)
 # You are advised to set and use this variable to write your links in the HTML layouts
 baseUrl: http://www.sirius.ro/php/sirius/upload
+paypal: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SGXDKNJCXFPJU
+gacode: UA-535999-18
 
 projectName: Sirius\Upload
 title: Sirius\Upload
