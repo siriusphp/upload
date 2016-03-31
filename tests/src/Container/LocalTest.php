@@ -3,16 +3,6 @@ namespace Sirius\Upload\Container;
 
 use Sirius\Upload\Container\Local as LocalContainer;
 
-// define the function in this namespace so it takes precedence over the native PHP implementation
-function is_uploaded_file($file)
-{
-    return file_exists($file);
-}
-
-function move_uploaded_file($source, $destination)
-{
-    return rename($source, $destination);
-}
 
 class LocalTest extends \PHPUnit_Framework_TestCase
 {
