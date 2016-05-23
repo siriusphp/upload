@@ -13,7 +13,7 @@ use Sirius\Upload\Handler as UploadHandler;
 $uploadHandler = new UploadHandler('/path/to/local_folder');
 
 // set up the validation rules
-$uploadHandler->addRule('extension', ['allowed' => 'jpg', 'jpeg', 'png'], '{label} should be a valid image (jpg, jpeg, png)', 'Profile picture');
+$uploadHandler->addRule('extension', ['allowed' => 'jpg,jpeg,png'], '{label} should be a valid image (jpg, jpeg, png)', 'Profile picture');
 $uploadHandler->addRule('size', ['max' => '20M'], '{label} should have less than {max}', 'Profile picture');
 $uploadHandler->addRule('imageratio', ['ratio' => 1], '{label} should be a sqare image', 'Profile picture');
 
