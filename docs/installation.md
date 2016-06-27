@@ -8,7 +8,7 @@ title: Installing Sirius\Upload
 
 Sirius\Validation is available on [Packagist](https://packagist.org/packages/siriusphp/upload) so you can use
 ```
-composer require sirius/upload
+composer require siriusphp/upload
 ```
 
 Make sure to include the Composer autoload file in your project
