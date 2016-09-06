@@ -29,7 +29,7 @@ class Local implements ContainerInterface
              * Same issue with 766 if the Web user is either Group or Others. 6 = read/write and lack the execute flag.
              * So 766 wont work if the web server is not the owner of the directory.
             */
-            mkdir($directory, 0755, true); // , because it dosent work 
+            mkdir($directory, 0755, true);
         }
 
         return is_dir($directory) && $this->isWritable();
