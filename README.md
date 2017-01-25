@@ -4,6 +4,7 @@
 [![Latest Version](https://img.shields.io/packagist/v/siriusphp/upload.svg?style=flat-square)](https://github.com/siriusphp/upload/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://github.com/siriusphp/upload/blob/master/LICENSE)
 [![Build Status](https://img.shields.io/travis/siriusphp/upload/master.svg?style=flat-square)](https://travis-ci.org/siriusphp/upload)
+[![PHP 7 ready](http://php7ready.timesplinter.ch/siriusphp/upload/master/badge.svg)](https://travis-ci.org/siriusphp/upload)
 [![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/siriusphp/upload.svg?style=flat-square)](https://scrutinizer-ci.com/g/siriusphp/upload/code-structure)
 [![Quality Score](https://img.shields.io/scrutinizer/g/siriusphp/upload.svg?style=flat-square)](https://scrutinizer-ci.com/g/siriusphp/upload)
 [![Total Downloads](https://img.shields.io/packagist/dt/siriusphp/upload.svg?style=flat-square)](https://packagist.org/packages/siriusphp/upload)
