@@ -193,16 +193,14 @@ class Handler implements UploadHandlerInterface
      */
     public function process($files = array())
     {
-        $isSingle = isset($files['name']) && !is_array($files['name']);
-
         $files = Arr::normalizeFiles($files);
 
         foreach ($files as $k => $file) {
             $files[$k] = $this->processSingleFile($file);
         }
 
-        if ($isSingle) {
-            return new Result\File($files[0], $this->container);
+        if (count($files) == 1) {
+            return new Result\File(array_pop($files), $this->container);
         }
 
         return new Result\Collection($files, $this->container);
