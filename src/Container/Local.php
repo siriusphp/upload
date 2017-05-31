@@ -22,7 +22,7 @@ class Local implements ContainerInterface
 
     protected function ensureDirectory($directory)
     {
-        if (!is_dir($directory)) {
+        if (!file_exists($directory)) {
             mkdir($directory, 0755, true);
         }
 
