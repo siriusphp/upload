@@ -4,6 +4,21 @@ namespace Sirius\Upload\Util;
 
 class Arr extends \Sirius\Validation\Util\Arr
 {
+    public static function remapFilesArray(array $files)
+    {
+        $result = array();
+        foreach ($files['name'] as $k => $v) {
+            $result[$k] = array(
+                'name' => $files['name'][$k],
+                'type' => @$files['type'][$k],
+                'size' => @$files['size'][$k],
+                'error' => @$files['error'][$k],
+                'tmp_name' => $files['tmp_name'][$k]
+            );
+        }
+
+        return $result;
+    }
 
     /**
      * Fixes the $_FILES array problem and ensures the result is an array of files
@@ -24,18 +39,7 @@ class Arr extends \Sirius\Validation\Util\Arr
 
         // we have list of files, which PHP messes up
         if (isset($files['name']) && is_array($files['name'])) {
-            $result = array();
-            foreach ($files['name'] as $k => $v) {
-                $result[$k] = array(
-                    'name' => $files['name'][$k],
-                    'type' => @$files['type'][$k],
-                    'size' => @$files['size'][$k],
-                    'error' => @$files['error'][$k],
-                    'tmp_name' => $files['tmp_name'][$k]
-                );
-            }
-
-            return $result;
+            return Arr::remapFilesArray($files);
         }
 
         // we have a list of files which are in correct format
