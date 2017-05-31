@@ -23,12 +23,6 @@ class Local implements ContainerInterface
     protected function ensureDirectory($directory)
     {
         if (!is_dir($directory)) {
-            /**
-             * change prefix directory from 766 to 755:
-             * 755 is the way to go because the User need the execute flag to enter the directory.
-             * Same issue with 766 if the Web user is either Group or Others. 6 = read/write and lack the execute flag.
-             * So 766 wont work if the web server is not the owner of the directory.
-            */
             mkdir($directory, 0755, true);
         }
 
