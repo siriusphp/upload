@@ -32,19 +32,31 @@ class Arr extends \Sirius\Validation\Util\Arr
      */
     public static function normalizeFiles(array $files)
     {
-        // we have a single file
-        if (isset($files['name']) && !is_array($files['name'])) {
-            return array($files);
+        // The caller passed $_FILES['some_field_name']
+        if (isset($files['name'])) {
+            // we have a single file
+            if(!is_array($files['name'])) {
+                return array($files);
+            }
+            // we have list of files, which PHP messes up
+            else {
+                return Arr::remapFilesArray($files);
+            }
         }
-
-        // we have list of files, which PHP messes up
-        if (isset($files['name']) && is_array($files['name'])) {
-            return Arr::remapFilesArray($files);
-        }
-
-        // we have a list of files which are in correct format
-        if (isset($files[0]) && isset($files[0]['name'])) {
-            return $files;
+        // The caller passed $_FILES
+        else {
+            $keys = array_keys($files);
+            if (isset($keys[0]) && isset($files[$keys[0]]['name'])) {
+                if (!is_array($files[$keys[0]]['name'])) {
+                    // $files is in the correct format already, even in the
+                    // case it contains a single element.
+                    return $files;
+                }
+                // we have list of files, which PHP messes up
+                else {
+                    return Arr::remapFilesArray($files[$keys[0]]);
+                }
+            }
         }
 
         // if we got here, the $file argument is wrong
