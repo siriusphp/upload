@@ -256,7 +256,7 @@ class Handler implements UploadHandlerInterface
         $file['name'] = $prefix . $file['name'];
         // create the lock file if autoconfirm is disabled
         if (!$this->autoconfirm) {
-            $this->container->save($file['name'] . '.lock', time());
+            $this->container->save($file['name'] . '.lock', (string) time());
         }
 
         return $file;
