@@ -6,7 +6,7 @@ use Sirius\Upload\Container\ContainerInterface;
 use Sirius\Upload\Container\Local as LocalContainer;
 use Sirius\Upload\Exception\InvalidContainerException;
 use Sirius\Upload\Result\ResultInterface;
-use Sirius\Upload\Util\Arr;
+use Sirius\Upload\Util\Helper;
 use Sirius\Validation\ErrorMessage;
 use Sirius\Validation\ValueValidator;
 
@@ -200,7 +200,7 @@ class Handler implements UploadHandlerInterface
      */
     public function process($files = []):ResultInterface
     {
-        $files = Arr::normalizeFiles($files);
+        $files = Helper::normalizeFiles($files);
 
         foreach ($files as $k => $file) {
             $files[$k] = $this->processSingleFile($file);

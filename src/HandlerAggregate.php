@@ -3,7 +3,8 @@ declare(strict_types=1);
 namespace Sirius\Upload;
 
 use Sirius\Upload\Result\Collection;
-use Sirius\Upload\Util\Arr;
+use Sirius\Upload\Util\Helper;
+use Sirius\Validation\Util\Arr;
 
 class HandlerAggregate implements \IteratorAggregate
 {

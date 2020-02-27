@@ -2,18 +2,27 @@
 
 namespace Sirius\Upload;
 
+use Laminas\Diactoros\StreamFactory;
+use Laminas\Diactoros\UploadedFile;
+use Symfony\Component\HttpFoundation\File\UploadedFile as SymfonyUploadedFile;
+
 class HandlerTest extends \PHPUnit\Framework\TestCase
 {
+
+    /**
+     * @var Handler
+     */
+    protected $handler;
 
     protected function setUp(): void
     {
         $this->tmpFolder = realpath(__DIR__ . '/../fixitures/');
         @mkdir($this->tmpFolder . '/container');
         $this->uploadFolder = realpath(__DIR__ . '/../fixitures/container/');
-        $this->handler = new Handler(
+        $this->handler      = new Handler(
             $this->uploadFolder, array(
-                Handler::OPTION_PREFIX => '',
-                Handler::OPTION_OVERWRITE => false,
+                Handler::OPTION_PREFIX      => '',
+                Handler::OPTION_OVERWRITE   => false,
                 Handler::OPTION_AUTOCONFIRM => false
             )
         );
@@ -41,7 +50,7 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
 
         $result = $this->handler->process(
             array(
-                'name' => 'abc.jpg',
+                'name'     => 'abc.jpg',
                 'tmp_name' => $this->tmpFolder . '/abc.tmp'
             )
         );
@@ -59,7 +68,7 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
 
         $result = $this->handler->process(
             array(
-                'name' => 'abc.jpg',
+                'name'     => 'abc.jpg',
                 'tmp_name' => $this->tmpFolder . '/abc.tmp'
             )
         );
@@ -72,7 +81,7 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
 
         $result = $this->handler->process(
             array(
-                'name' => 'abc.jpg',
+                'name'     => 'abc.jpg',
                 'tmp_name' => $this->tmpFolder . '/abc.tmp'
             )
         );
@@ -85,7 +94,7 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
 
         $result = $this->handler->process(
             array(
-                'name' => 'abc.jpg',
+                'name'     => 'abc.jpg',
                 'tmp_name' => $this->tmpFolder . '/abc.tmp'
             )
         );
@@ -100,7 +109,7 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
 
         $result = $this->handler->process(
             array(
-                'name' => 'abc.jpg',
+                'name'     => 'abc.jpg',
                 'tmp_name' => $this->tmpFolder . '/abc.tmp'
             )
         );
@@ -115,7 +124,7 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
 
         $result = $this->handler->process(
             array(
-                'name' => 'abc.jpg',
+                'name'     => 'abc.jpg',
                 'tmp_name' => $this->tmpFolder . '/abc.tmp'
             )
         );
@@ -134,7 +143,7 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
 
         $result = $this->handler->process(
             array(
-                'name' => 'abc.jpg',
+                'name'     => 'abc.jpg',
                 'tmp_name' => $this->tmpFolder . '/abc.tmp'
             )
         );
@@ -158,11 +167,11 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
         $result = $this->handler->process(
             array(
                 array(
-                    'name' => 'abc.jpg',
+                    'name'     => 'abc.jpg',
                     'tmp_name' => $this->tmpFolder . '/abc.tmp'
                 ),
                 array(
-                    'name' => 'def.jpg',
+                    'name'     => 'def.jpg',
                     'tmp_name' => $this->tmpFolder . '/def.tmp'
                 )
             )
@@ -198,7 +207,7 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
         // array is as provided by PHP
         $result = $this->handler->process(
             array(
-                'name' => array(
+                'name'     => array(
                     'abc.jpg',
                     'def.jpg',
                 ),
@@ -238,7 +247,7 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
 
         $result = $this->handler->process(
             array(
-                'name' => 'abc.jpg',
+                'name'     => 'abc.jpg',
                 'tmp_name' => $this->tmpFolder . '/abc.tmp'
             )
         );
@@ -258,9 +267,9 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->addRule(Handler::RULE_IMAGE);
 
         // array is as provided by PHP
-        $result = $this->handler->process(
+        $result   = $this->handler->process(
             array(
-                'name' => array(
+                'name'     => array(
                     'abc.jpg',
                     'def.jpg',
                 ),
@@ -279,25 +288,119 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
 
     function testCustomSanitizationCallback()
     {
-        $this->handler->setSanitizerCallback(function($name) {
-        	return preg_replace('/[^A-Za-z0-9\.]+/', '-', strtolower($name));
+        $this->handler->setSanitizerCallback(function ($name) {
+            return preg_replace('/[^A-Za-z0-9\.]+/', '-', strtolower($name));
         });
         $this->createTemporaryFile('ABC 123.tmp', 'non image file');
-    
+
         $result = $this->handler->process(
             array(
-                'name' => 'ABC 123.tmp',
+                'name'     => 'ABC 123.tmp',
                 'tmp_name' => $this->tmpFolder . '/ABC 123.tmp'
             )
         );
-        
+
         $this->assertTrue(file_exists($this->uploadFolder . '/abc-123.tmp'));
     }
-    
-    function testExceptionThrownForInvalidSanitizationCallback() {
+
+    function testExceptionThrownForInvalidSanitizationCallback()
+    {
         $this->expectException('InvalidArgumentException');
         $this->handler->setSanitizerCallback('not a callable');
     }
-    
-    
+
+    function testPsr7UploadedFiles()
+    {
+        $files = ['abc.tmp', 'def.tmp'];
+
+        $psr7Files = [];
+
+        foreach ($files as $file) {
+            $this->createTemporaryFile($file, 'first_file');
+
+            $factory     = new StreamFactory();
+            $stream      = $factory->createStreamFromFile($this->tmpFolder . '/' . $file);
+            $psr7Files[] = new UploadedFile(
+                $stream,
+                $stream->getSize(),
+                UPLOAD_ERR_OK,
+                $file
+            );
+        }
+
+        $result = $this->handler->process($psr7Files);
+
+        foreach ($result as $item) {
+            $this->assertTrue(file_exists($this->uploadFolder . '/' . $item->name));
+            $this->assertTrue(file_exists($this->uploadFolder . '/' . $item->name . '.lock'));
+
+            $item->confirm();
+            $this->assertFalse(file_exists($this->uploadFolder . '/' . $item->name . '.lock'));
+        }
+    }
+
+    function testSinglePsr7UploadedFile()
+    {
+        $file = 'abc.tmp';
+
+        $this->createTemporaryFile($file, 'first_file');
+
+        $factory  = new StreamFactory();
+        $stream   = $factory->createStreamFromFile($this->tmpFolder . '/' . $file);
+        $psr7File = new UploadedFile(
+            $stream,
+            $stream->getSize(),
+            UPLOAD_ERR_OK,
+            $file
+        );
+
+        $result = $this->handler->process($psr7File);
+
+        $this->assertTrue(file_exists($this->uploadFolder . '/' . $result->name));
+        $this->assertTrue(file_exists($this->uploadFolder . '/' . $result->name . '.lock'));
+
+        $result->confirm();
+        $this->assertFalse(file_exists($this->uploadFolder . '/' . $result->name . '.lock'));
+    }
+
+    function testSymfonyUploadedFiles()
+    {
+        $files = ['abc.tmp', 'def.tmp'];
+
+        $symfonyFiles = [];
+
+        foreach ($files as $file) {
+            $this->createTemporaryFile($file, 'first_file');
+
+            $symfonyFiles[] = new SymfonyUploadedFile($this->tmpFolder . '/' . $file, $file);
+        }
+
+        $result = $this->handler->process($symfonyFiles);
+
+        foreach ($result as $item) {
+            $this->assertTrue(file_exists($this->uploadFolder . '/' . $item->name));
+            $this->assertTrue(file_exists($this->uploadFolder . '/' . $item->name . '.lock'));
+
+            $item->confirm();
+            $this->assertFalse(file_exists($this->uploadFolder . '/' . $item->name . '.lock'));
+        }
+    }
+
+    function testSingleSymfonyUploadedFile()
+    {
+        $file = 'abc.tmp';
+
+        $this->createTemporaryFile($file, 'first_file');
+
+        $symfonyFile = new SymfonyUploadedFile($this->tmpFolder . '/' . $file, $file);
+
+        $result = $this->handler->process($symfonyFile);
+
+        $this->assertTrue(file_exists($this->uploadFolder . '/' . $result->name));
+        $this->assertTrue(file_exists($this->uploadFolder . '/' . $result->name . '.lock'));
+
+        $result->confirm();
+        $this->assertFalse(file_exists($this->uploadFolder . '/' . $result->name . '.lock'));
+    }
+
 }
