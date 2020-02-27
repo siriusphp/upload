@@ -1,5 +1,5 @@
 ---
-title: Upload options
+title: Upload options | Sirius Upload
 ---
 
 #Upload options

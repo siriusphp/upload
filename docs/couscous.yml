@@ -68,3 +68,6 @@ menu:
                 custom_validation:
                     text: Custom validation
                     relativeUrl: custom_validation.html
+                integrations:
+                    text: Integrations
+                    relativeUrl: integrations.html

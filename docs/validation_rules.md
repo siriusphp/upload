@@ -1,10 +1,10 @@
 ---
-title: File upload validation rules
+title: File upload validation rules | Sirius Upload
 ---
 
 # Upload validation rules
 
-For validating the uploads the library uses the [Sirius\Validation](https://www.github.com/siriushp/validation) library.
+For validating the uploads the library uses the [Sirius\Validation](https://www.sirius.ro/php/sirius/validation) library.
 
 You add validation rules using the following command:
 
@@ -19,7 +19,7 @@ The following validation rules are available.
 #### extension
 
 ```php
-$uploadHandler->addRule('extension', array('allowed' => 'doc,pdf'));
+$uploadHandler->addRule('extension', ['allowed' => 'doc,pdf']);
 // or any other format that is understandable by the Sirius\Validation library, like
 $uploadHandler->addRule('extension', 'allowed=doc,pdf', '{label} should be a DOC or PDF file', 'The resume');
 ```

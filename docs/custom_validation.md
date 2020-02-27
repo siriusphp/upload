@@ -1,5 +1,5 @@
 ---
-title: Custom upload validation
+title: Custom upload validation | Sirius Upload
 ---
 
 # Custom validation

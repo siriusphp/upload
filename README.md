@@ -10,11 +10,13 @@
 
 Framework agnostic upload handler library.
 
-
 ## Features
 
 1. Validates files agains usual rules: extension, file size, image size (wdith, height, ratio). It uses [Sirius Validation](http://github.com/siriusphp/validation) for this purpose.
 2. Moves valid uploaded files into containers. Containers are usually local folders but you can implement your own or use other filesystem abstractions like [Gaufrette](https://github.com/KnpLabs/Gaufrette) or [Flysystem](https://github.com/FrenkyNet/Flysystem).
+3. Works with PSR7 `UploadedFileInterface` objects and with Symfony's `UploadedFile`s (see [integrations](docs/integrations.md)).
+
+Used by [Bolt CMS](https://bolt.cm/)
 
 ## Elevator pitch
 

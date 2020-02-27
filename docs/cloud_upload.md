@@ -1,5 +1,5 @@
 ---
-title: Upload into the cloud
+title: Upload into the cloud | Sirius Upload
 ---
 
 # Upload into the cloud

@@ -1,5 +1,5 @@
 ---
-title: The upload aggregator
+title: The upload aggregator | Sirius Upload
 ---
 
 # The upload aggregator

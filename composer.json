@@ -7,7 +7,10 @@
         "form",
         "upload",
         "validation",
-        "file"
+        "file",
+        "file upload",
+        "security",
+        "psr-7"
     ],
     "authors": [
         {

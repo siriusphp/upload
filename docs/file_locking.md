@@ -1,5 +1,5 @@
 ---
-title: File locking during uploads
+title: File locking during uploads | Sirius Upload
 ---
 
 # What is 'file locking'?

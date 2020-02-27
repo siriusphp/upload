@@ -1,5 +1,5 @@
 ---
-title: Simple upload example
+title: Simple upload example | Sirius Upload
 ---
 
 # Simple example

@@ -1,5 +1,5 @@
 ---
-title: Installing Sirius\Upload
+title: Installing Sirius\Upload | Sirius Upload
 ---
 
 #Installation
