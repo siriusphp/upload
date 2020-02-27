@@ -1,10 +1,11 @@
 <?php
+declare(strict_types=1);
 
 namespace Sirius\Upload\Result;
 
 use Sirius\Upload\Container\ContainerInterface;
 
-class File
+class File implements ResultInterface
 {
 
     /**
@@ -20,7 +21,7 @@ class File
 
     /**
      * The container to which this file belongs to
-     * @var \Sirius\Upload\Container\ContainerInterface
+     * @var ContainerInterface
      */
     protected $container;
 
@@ -39,7 +40,7 @@ class File
      *
      * @return bool
      */
-    public function isValid()
+    public function isValid():bool
     {
         return $this->file['name'] && count($this->getMessages()) === 0;
     }
@@ -49,12 +50,12 @@ class File
      *
      * @return array
      */
-    public function getMessages()
+    public function getMessages():array
     {
         if (isset($this->file['messages'])) {
             return $this->file['messages'];
         } else {
-            return array();
+            return [];
         }
     }
 

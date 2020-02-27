@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Sirius\Upload;
 
@@ -15,6 +16,5 @@ interface UploadHandlerInterface
      *
      * @param array $files
      */
-    public function process($files = array());
-
+    public function process($files = []);
 }

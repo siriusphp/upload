@@ -9,14 +9,14 @@
 namespace Sirius\Upload;
 
 
-class HandlerAggregateTest extends \PHPUnit_Framework_TestCase
+class HandlerAggregateTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var HandlerAggregate
      */
     protected $agg;
 
-    function setUp()
+    protected function setUp(): void
     {
         $this->tmpFolder = realpath(__DIR__ . '/../fixitures/');
         @mkdir($this->tmpFolder . '/container');
@@ -55,7 +55,7 @@ class HandlerAggregateTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    function tearDown()
+    protected function tearDown(): void
     {
         $files = glob($this->uploadFolder . '/*'); // get all file names
         foreach ($files as $file) { // iterate files

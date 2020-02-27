@@ -9,3 +9,7 @@ composer.lock
 atlassian-ide-plugin.xml
 docs/couscous.phar
 docs/.couscous/
+couscous.phar
+php-cs-fixer.phar
+phpcbf.phar
+phpcs.phar

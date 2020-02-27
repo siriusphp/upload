@@ -1,20 +1,21 @@
 <?php
+declare(strict_types=1);
 
 namespace Sirius\Upload\Util;
 
 class Arr extends \Sirius\Validation\Util\Arr
 {
-    public static function remapFilesArray(array $files)
+    public static function remapFilesArray(array $files): array
     {
-        $result = array();
+        $result = [];
         foreach ($files['name'] as $k => $v) {
-            $result[$k] = array(
+            $result[$k] = [
                 'name' => $files['name'][$k],
                 'type' => @$files['type'][$k],
                 'size' => @$files['size'][$k],
                 'error' => @$files['error'][$k],
                 'tmp_name' => $files['tmp_name'][$k]
-            );
+            ];
         }
 
         return $result;
@@ -30,37 +31,33 @@ class Arr extends \Sirius\Validation\Util\Arr
      * @param  array $files
      * @return array
      */
-    public static function normalizeFiles(array $files)
+    public static function normalizeFiles(array $files): array
     {
         // The caller passed $_FILES['some_field_name']
         if (isset($files['name'])) {
             // we have a single file
-            if(!is_array($files['name'])) {
-                return array($files);
-            }
-            // we have list of files, which PHP messes up
-            else {
+            if (!is_array($files['name'])) {
+                return [$files];
+            } else {
+                // we have list of files, which PHP messes up
                 return Arr::remapFilesArray($files);
             }
-        }
-        // The caller passed $_FILES
-        else {
+        } else {
+            // The caller passed $_FILES
             $keys = array_keys($files);
             if (isset($keys[0]) && isset($files[$keys[0]]['name'])) {
                 if (!is_array($files[$keys[0]]['name'])) {
                     // $files is in the correct format already, even in the
                     // case it contains a single element.
                     return $files;
-                }
-                // we have list of files, which PHP messes up
-                else {
+                } else {
+                    // we have list of files, which PHP messes up
                     return Arr::remapFilesArray($files[$keys[0]]);
                 }
             }
         }
 
         // if we got here, the $file argument is wrong
-        return array();
+        return [];
     }
-
 }

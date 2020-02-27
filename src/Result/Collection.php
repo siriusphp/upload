@@ -1,14 +1,15 @@
 <?php
+declare(strict_types=1);
 
 namespace Sirius\Upload\Result;
 
 use Sirius\Upload\Container\ContainerInterface;
 
-class Collection extends \ArrayIterator
+class Collection extends \ArrayIterator implements ResultInterface
 {
-    public function __construct($files = array(), ContainerInterface $container = null)
+    public function __construct($files = [], ContainerInterface $container = null)
     {
-        $filesArray = array();
+        $filesArray = [];
         if (is_array($files) && !empty($files)) {
             foreach ($files as $key => $file) {
                 $filesArray[$key] = new File($file, $container);
@@ -33,7 +34,7 @@ class Collection extends \ArrayIterator
         }
     }
 
-    public function isValid()
+    public function isValid():bool
     {
         foreach ($this->getMessages() as $messages) {
             if ($messages) {
@@ -44,9 +45,9 @@ class Collection extends \ArrayIterator
         return true;
     }
 
-    public function getMessages()
+    public function getMessages():array
     {
-        $messages = array();
+        $messages = [];
         foreach ($this as $key => $file) {
             /* @var $file \Sirius\Upload\Result\File */
             $messages[$key] = $file->getMessages();
@@ -54,5 +55,4 @@ class Collection extends \ArrayIterator
 
         return $messages;
     }
-
 }

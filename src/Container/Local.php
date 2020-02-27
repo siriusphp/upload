@@ -1,10 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace Sirius\Upload\Container;
 
 class Local implements ContainerInterface
 {
-
     protected $baseDirectory;
 
     public function __construct($baseDirectory)
@@ -20,7 +20,7 @@ class Local implements ContainerInterface
         return rtrim($path, DIRECTORY_SEPARATOR);
     }
 
-    protected function ensureDirectory($directory)
+    protected function ensureDirectory($directory):bool
     {
         if (!file_exists($directory)) {
             mkdir($directory, 0755, true);
@@ -32,7 +32,7 @@ class Local implements ContainerInterface
     /**
      * Check if the container is writable
      */
-    public function isWritable()
+    public function isWritable():bool
     {
         return is_writable($this->baseDirectory);
     }
@@ -43,7 +43,7 @@ class Local implements ContainerInterface
      * @param  string $file
      * @return bool
      */
-    public function has($file)
+    public function has($file):bool
     {
         return $file && file_exists($this->baseDirectory . $file);
     }
@@ -55,7 +55,7 @@ class Local implements ContainerInterface
      * @param  string $content
      * @return bool
      */
-    public function save($file, $content)
+    public function save($file, $content):bool
     {
         $file = $this->normalizePath($file);
         $dir = dirname($this->baseDirectory . $file);
@@ -72,7 +72,7 @@ class Local implements ContainerInterface
      * @param  string $file
      * @return bool
      */
-    public function delete($file)
+    public function delete($file):bool
     {
         $file = $this->normalizePath($file);
         if (file_exists($this->baseDirectory . $file)) {
@@ -89,14 +89,10 @@ class Local implements ContainerInterface
      * @param  string $destination
      * @return bool
      */
-    public function moveUploadedFile($localFile, $destination)
+    public function moveUploadedFile($localFile, $destination):bool
     {
         $dir = dirname($this->baseDirectory . $destination);
         if (file_exists($localFile) && $this->ensureDirectory($dir)) {
-            /**
-             * we could use is_uploaded_file() and move_uploaded_file()
-             * but in case of ajax uploads that would fail
-             */
             if (is_readable($localFile)) {
                 // rename() would be good but this is better because $localFile may become 'unwritable'
                 $result = copy($localFile, $this->baseDirectory . $destination);
@@ -106,5 +102,4 @@ class Local implements ContainerInterface
         }
         return false;
     }
-
 }

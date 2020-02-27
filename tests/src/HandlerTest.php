@@ -2,10 +2,10 @@
 
 namespace Sirius\Upload;
 
-class HandlerTest extends \PHPUnit_Framework_TestCase
+class HandlerTest extends \PHPUnit\Framework\TestCase
 {
 
-    function setUp()
+    protected function setUp(): void
     {
         $this->tmpFolder = realpath(__DIR__ . '/../fixitures/');
         @mkdir($this->tmpFolder . '/container');
@@ -19,7 +19,7 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    function tearDown()
+    protected function tearDown(): void
     {
         $files = glob($this->uploadFolder . '/*'); // get all file names
         foreach ($files as $file) { // iterate files
@@ -224,7 +224,7 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
 
     function testExceptionTrwonForInvalidContainer()
     {
-        $this->setExpectedException('Sirius\Upload\Exception\InvalidContainerException');
+        $this->expectException('Sirius\Upload\Exception\InvalidContainerException');
 
         $handler = new Handler(new \stdClass());
     }
@@ -295,7 +295,7 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
     }
     
     function testExceptionThrownForInvalidSanitizationCallback() {
-        $this->setExpectedException('InvalidArgumentException');
+        $this->expectException('InvalidArgumentException');
         $this->handler->setSanitizerCallback('not a callable');
     }
     

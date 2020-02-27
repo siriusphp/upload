@@ -4,7 +4,7 @@ namespace Sirius\Upload\Container;
 use Sirius\Upload\Container\Local as LocalContainer;
 
 
-class LocalTest extends \PHPUnit_Framework_TestCase
+class LocalTest extends \PHPUnit\Framework\TestCase
 {
 
     function rrmdir($dir)
@@ -25,13 +25,13 @@ class LocalTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    function setUp()
+    protected function setUp(): void
     {
         $this->dir = realpath(__DIR__ . '/../../') . '/fixture/';
         $this->container = new LocalContainer($this->dir);
     }
 
-    function tearDown()
+    protected function tearDown(): void
     {
         $this->rrmdir($this->dir);
     }

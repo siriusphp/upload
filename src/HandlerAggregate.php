@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Sirius\Upload;
 
 use Sirius\Upload\Result\Collection;
@@ -6,8 +7,7 @@ use Sirius\Upload\Util\Arr;
 
 class HandlerAggregate implements \IteratorAggregate
 {
-
-    protected $handlers = array();
+    protected $handlers = [];
 
     /**
      * Adds a handler on the aggregate
@@ -50,7 +50,6 @@ class HandlerAggregate implements \IteratorAggregate
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
      * Retrieve an external iterator
      *
      * @link http://php.net/manual/en/iteratoraggregate.getiterator.php

@@ -1,9 +1,11 @@
 <?php
+declare(strict_types=1);
 namespace Sirius\Upload;
 
 use Sirius\Upload\Container\ContainerInterface;
 use Sirius\Upload\Container\Local as LocalContainer;
 use Sirius\Upload\Exception\InvalidContainerException;
+use Sirius\Upload\Result\ResultInterface;
 use Sirius\Upload\Util\Arr;
 use Sirius\Validation\ErrorMessage;
 use Sirius\Validation\ValueValidator;
@@ -68,7 +70,7 @@ class Handler implements UploadHandlerInterface
      * @param  ValueValidator                      $validator
      * @throws InvalidContainerException
      */
-    public function __construct($directoryOrContainer, $options = array(), ValueValidator $validator = null)
+    public function __construct($directoryOrContainer, $options = [], ValueValidator $validator = null)
     {
         $container = $directoryOrContainer;
         if (is_string($directoryOrContainer)) {
@@ -86,11 +88,11 @@ class Handler implements UploadHandlerInterface
         $this->validator = $validator;
 
         // set options
-        $availableOptions = array(
+        $availableOptions = [
             static::OPTION_PREFIX => 'setPrefix',
             static::OPTION_OVERWRITE => 'setOverwrite',
             static::OPTION_AUTOCONFIRM => 'setAutoconfirm'
-        );
+        ];
         foreach ($availableOptions as $key => $method) {
             if (isset($options[$key])) {
                 $this->{$method}($options[$key]);
@@ -102,7 +104,8 @@ class Handler implements UploadHandlerInterface
      * Enable/disable upload overwrite
      *
      * @param  bool                   $overwrite
-     * @return \Sirius\Upload\Handler
+     *
+     * @return Handler
      */
     public function setOverwrite($overwrite)
     {
@@ -118,7 +121,8 @@ class Handler implements UploadHandlerInterface
      * - a function that returns a string
      *
      * @param  string|callable        $prefix
-     * @return \Sirius\Upload\Handler
+     *
+     * @return Handler
      */
     public function setPrefix($prefix)
     {
@@ -132,7 +136,8 @@ class Handler implements UploadHandlerInterface
      * Autoconfirmation does not require calling `confirm()`
      *
      * @param  boolean                $autoconfirm
-     * @return \Sirius\Upload\Handler
+     *
+     * @return Handler
      */
     public function setAutoconfirm($autoconfirm)
     {
@@ -143,12 +148,13 @@ class Handler implements UploadHandlerInterface
     
     /**
      * Set the sanitizer function for cleaning up the file names
-     * 
+     *
      * @param callable $callback
+     *
+     * @return Handler
      * @throws \InvalidArgumentException
-     * @return \Sirius\Upload\Handler
      */
-    function setSanitizerCallback($callback)
+    public function setSanitizerCallback($callback)
     {
         if (!is_callable($callback)) {
             throw new \InvalidArgumentException('The $callback parameter is not a valid callable entity');
@@ -163,19 +169,20 @@ class Handler implements UploadHandlerInterface
      * @param  string                 $name
      * @param  mixed                  $options
      * @param  string                 $errorMessageTemplate
-     * @param  string                 $label
-     * @return \Sirius\Upload\Handler
+     * @param  string $label
+     *
+     * @return Handler
      */
-    public function addRule($name, $options = null, $errorMessageTemplate = null, $label = null)
+    public function addRule($name, $options = null, $errorMessageTemplate = null, $label = null):Handler
     {
-        $predefinedRules = array(
+        $predefinedRules = [
             static::RULE_EXTENSION,
             static::RULE_IMAGE,
             static::RULE_SIZE,
             static::RULE_IMAGE_WIDTH,
             static::RULE_IMAGE_HEIGHT,
             static::RULE_IMAGE_RATIO
-        );
+        ];
         // convert to a name that is known by the default RuleFactory
         if (in_array($name, $predefinedRules)) {
             $name = 'upload' . $name;
@@ -189,9 +196,9 @@ class Handler implements UploadHandlerInterface
      * Processes a file upload and returns an upload result file/collection
      *
      * @param  array                         $files
-     * @return Result\Collection|Result\File
+     * @return Result\Collection|Result\File|ResultInterface
      */
-    public function process($files = array())
+    public function process($files = []):ResultInterface
     {
         $files = Arr::normalizeFiles($files);
 
@@ -215,7 +222,7 @@ class Handler implements UploadHandlerInterface
      * @param  array $file
      * @return array
      */
-    protected function processSingleFile(array $file)
+    protected function processSingleFile(array $file):array
     {
         // store it for future reference
         $file['original_name'] = $file['name'];

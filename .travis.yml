@@ -2,17 +2,14 @@ sudo: false
 language: php
 
 php:
-  - 5.3
-  - 5.4
-  - 5.5
-  - 5.6
-  - hhvm
-  - '7'
+  - 7.1
+  - 7.2
+  - 7.3
+  - 7.4
 
 matrix:
     allow_failures:
-        - php: 5.3
-        - php: hhvm
+        - php: 7.1
     fast_finish: true
 
 before_script:
@@ -22,8 +19,7 @@ before_script:
 script:
   - mkdir -p build/logs
   - mkdir -p build/coverage
-  - cd tests
-  - php ../vendor/phpunit/phpunit/phpunit
+  - vendor/bin/phpunit -c tests/phpunit.xml
   - cd ../
 
 after_script:
