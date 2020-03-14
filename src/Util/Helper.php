@@ -88,8 +88,9 @@ class Helper
             }
         }
 
-        if (is_array($files) && is_object($files[0])) {
-            if (is_subclass_of($files[0], self::PSR7_UPLOADED_FILE_CLASS)) {
+        // If caller passed in an array of objects (Either PSR7 or Symfony)
+        if (is_array($files) && is_object(reset($files))) {
+            if (is_subclass_of(reset($files), self::PSR7_UPLOADED_FILE_CLASS)) {
                 $result = [];
                 foreach ($files as $file) {
                     $result[] = self::extractFromUploadedFileInterface($file);
@@ -98,7 +99,7 @@ class Helper
                 return $result;
             }
 
-            if (get_class($files[0]) == self::SYMFONY_UPLOADED_FILE_CLASS) {
+            if (get_class(reset($files)) == self::SYMFONY_UPLOADED_FILE_CLASS) {
                 $result = [];
                 foreach ($files as $file) {
                     $result[] = self::extractFromSymfonyFile($file);
@@ -107,11 +108,6 @@ class Helper
                 return $result;
             }
         }
-
-
-
-
-
 
         // The caller passed $_FILES['some_field_name']
         if (isset($files['name'])) {
@@ -137,7 +133,7 @@ class Helper
             }
         }
 
-        // if we got here, the $file argument is wrong
+        // If we got here, the $file argument is wrong
         return [];
     }
 }
