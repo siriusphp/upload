@@ -228,7 +228,7 @@ class Handler implements UploadHandlerInterface
         $file['original_name'] = $file['name'];
 
         // sanitize the file name
-        $file['name'] = $this->sanitizeFileName($file['name']);
+        $file['name'] = $this->sanitizeFileName($file['name'], $file);
 
         $file = $this->validateFile($file);
         // if there are messages the file is not valid
@@ -289,12 +289,13 @@ class Handler implements UploadHandlerInterface
      * and replacing "invalid" characters with underscore _
      *
      * @param  string $name
+     * @param  array $file
      * @return string
      */
-    protected function sanitizeFileName($name)
+    protected function sanitizeFileName($name, $file)
     {
         if ($this->sanitizerCallback) {
-            return call_user_func($this->sanitizerCallback, $name);
+            return call_user_func($this->sanitizerCallback, $name, $file);
         }
         return preg_replace('/[^A-Za-z0-9\.]+/', '_', $name);
     }

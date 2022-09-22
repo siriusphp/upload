@@ -288,8 +288,11 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
 
     function testCustomSanitizationCallback()
     {
-        $this->handler->setSanitizerCallback(function ($name) {
-            return preg_replace('/[^A-Za-z0-9\.]+/', '-', strtolower($name));
+        $this->handler->setSanitizerCallback(function ($name, $file) {
+            return preg_replace(
+                '/[^A-Za-z0-9\.]+/', '-',
+                substr(md5_file($file['tmp_name']), 0, 8) . '-' . strtolower($name)
+            );
         });
         $this->createTemporaryFile('ABC 123.tmp', 'non image file');
 
@@ -300,7 +303,7 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
             )
         );
 
-        $this->assertTrue(file_exists($this->uploadFolder . '/abc-123.tmp'));
+        $this->assertTrue(file_exists($this->uploadFolder . '/35d41ded-abc-123.tmp'));
     }
 
     function testExceptionThrownForInvalidSanitizationCallback()
