@@ -53,7 +53,7 @@ class HandlerAggregate implements \IteratorAggregate
     /**
      * Retrieve an external iterator
      *
-     * @link http://php.net/manual/en/iteratoraggregate.getiterator.php
+     * @link https://php.net/manual/en/iteratoraggregate.getiterator.php
      * @return \Traversable An instance of an object implementing <b>Iterator</b> or
      *                      <b>Traversable</b>
      */
