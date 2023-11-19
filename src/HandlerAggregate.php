@@ -1,23 +1,22 @@
 <?php
 declare(strict_types=1);
+
 namespace Sirius\Upload;
 
 use Sirius\Upload\Result\Collection;
-use Sirius\Upload\Util\Helper;
 use Sirius\Validation\Util\Arr;
 
 class HandlerAggregate implements \IteratorAggregate
 {
-    protected $handlers = [];
+    /**
+     * @var array<string, Handler> $handlers
+     */
+    protected array $handlers = [];
 
     /**
      * Adds a handler on the aggregate
-     *
-     * @param  string  $selector
-     * @param  Handler $handler
-     * @return $this
      */
-    public function addHandler($selector, Handler $handler)
+    public function addHandler(string $selector, Handler $handler): self
     {
         $this->handlers[$selector] = $handler;
 
@@ -25,18 +24,18 @@ class HandlerAggregate implements \IteratorAggregate
     }
 
     /**
-     * Processes
-     * @param $files
-     * @return Collection
+     * @param array<string, mixed> $files
+     *
+     * @return Result\Collection
      */
-    public function process($files)
+    public function process(mixed $files): mixed
     {
         $result = new Collection();
         foreach ($this->handlers as $selector => $handler) {
             /* @var $handler Handler */
             $selectedFiles = Arr::getBySelector($files, $selector);
 
-            if (!$selectedFiles || !is_array($selectedFiles) || empty($selectedFiles)) {
+            if (empty($selectedFiles)) {
                 continue;
             }
 
@@ -50,15 +49,8 @@ class HandlerAggregate implements \IteratorAggregate
         return $result;
     }
 
-    /**
-     * Retrieve an external iterator
-     *
-     * @link http://php.net/manual/en/iteratoraggregate.getiterator.php
-     * @return \Traversable An instance of an object implementing <b>Iterator</b> or
-     *                      <b>Traversable</b>
-     */
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
-        return $this->handlers;
+        return new \ArrayIterator($this->handlers);
     }
 }

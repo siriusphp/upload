@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace Sirius\Upload;
 
 use Sirius\Upload\Container\ContainerInterface;
@@ -7,7 +8,6 @@ use Sirius\Upload\Container\Local as LocalContainer;
 use Sirius\Upload\Exception\InvalidContainerException;
 use Sirius\Upload\Result\ResultInterface;
 use Sirius\Upload\Util\Helper;
-use Sirius\Validation\ErrorMessage;
 use Sirius\Validation\ValueValidator;
 
 class Handler implements UploadHandlerInterface
@@ -25,72 +25,62 @@ class Handler implements UploadHandlerInterface
     const RULE_IMAGE_WIDTH = 'imagewidth';
     const RULE_IMAGE_RATIO = 'imageratio';
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
     /**
      * Prefix to be added to the file.
      * It can be a subfolder (if it ends with '/', a string to be used as prefix)
      * or a callback that returns a string
      *
-     * @var string|callback
+     * @var string|callable
      */
-    protected $prefix = '';
+    protected mixed $prefix = '';
 
     /**
      * When uploading a file that has the same name as a file that is
      * already in the container should it overwrite it or use another name
-     *
-     * @var boolean
      */
-    protected $overwrite = false;
+    protected bool $overwrite = false;
 
     /**
      * Whether or not the uploaded files are auto confirmed
+     */
+    protected bool $autoconfirm = false;
+
+    protected ?ValueValidator $validator = null;
+
+    /**
+     * @var callable
+     */
+    protected mixed $sanitizerCallback = null;
+
+    /**
+     * @param string|ContainerInterface $directoryOrContainer
+     * @param array<string, mixed> $options
      *
-     * @var boolean
-     */
-    protected $autoconfirm = false;
-
-    /**
-     * @var \Sirius\Validation\ValueValidator
-     */
-    protected $validator;
-    
-    /**
-     * @var function|callback
-     */
-    protected $sanitizerCallback;
-
-    /**
-     * @param $directoryOrContainer
-     * @param  array                               $options
-     * @param  ValueValidator                      $validator
      * @throws InvalidContainerException
      */
-    public function __construct($directoryOrContainer, $options = [], ValueValidator $validator = null)
+    public function __construct(mixed $directoryOrContainer, array $options = [], ValueValidator $validator = null)
     {
         $container = $directoryOrContainer;
         if (is_string($directoryOrContainer)) {
             $container = new LocalContainer($directoryOrContainer);
         }
-        if (!$container instanceof ContainerInterface) {
+        if ( ! $container instanceof ContainerInterface) {
             throw new InvalidContainerException('Destination container for uploaded files is not valid');
         }
         $this->container = $container;
 
         // create the validator
-        if (!$validator) {
+        if ( ! $validator) {
             $validator = new ValueValidator();
         }
         $this->validator = $validator;
 
         // set options
         $availableOptions = [
-            static::OPTION_PREFIX => 'setPrefix',
-            static::OPTION_OVERWRITE => 'setOverwrite',
+            static::OPTION_PREFIX      => 'setPrefix',
+            static::OPTION_OVERWRITE   => 'setOverwrite',
             static::OPTION_AUTOCONFIRM => 'setAutoconfirm'
         ];
         foreach ($availableOptions as $key => $method) {
@@ -100,16 +90,9 @@ class Handler implements UploadHandlerInterface
         }
     }
 
-    /**
-     * Enable/disable upload overwrite
-     *
-     * @param  bool                   $overwrite
-     *
-     * @return Handler
-     */
-    public function setOverwrite($overwrite)
+    public function setOverwrite(bool $overwrite): self
     {
-        $this->overwrite = (bool) $overwrite;
+        $this->overwrite = (bool)$overwrite;
 
         return $this;
     }
@@ -120,11 +103,9 @@ class Handler implements UploadHandlerInterface
      * - a string to be used as prefix
      * - a function that returns a string
      *
-     * @param  string|callable        $prefix
-     *
-     * @return Handler
+     * @param string|callable $prefix
      */
-    public function setPrefix($prefix)
+    public function setPrefix(mixed $prefix): self
     {
         $this->prefix = $prefix;
 
@@ -134,46 +115,34 @@ class Handler implements UploadHandlerInterface
     /**
      * Enable/disable upload autoconfirmation
      * Autoconfirmation does not require calling `confirm()`
-     *
-     * @param  boolean                $autoconfirm
-     *
-     * @return Handler
      */
-    public function setAutoconfirm($autoconfirm)
+    public function setAutoconfirm(bool $autoconfirm): self
     {
-        $this->autoconfirm = (bool) $autoconfirm;
+        $this->autoconfirm = (bool)$autoconfirm;
 
         return $this;
     }
-    
+
     /**
      * Set the sanitizer function for cleaning up the file names
-     *
-     * @param callable $callback
-     *
-     * @return Handler
      * @throws \InvalidArgumentException
      */
-    public function setSanitizerCallback($callback)
+    public function setSanitizerCallback(callable|\Closure $callback): self
     {
-        if (!is_callable($callback)) {
+        if ( ! is_callable($callback)) {
             throw new \InvalidArgumentException('The $callback parameter is not a valid callable entity');
         }
         $this->sanitizerCallback = $callback;
+
         return $this;
     }
 
     /**
      * Add validation rule (extension|size|width|height|ratio)
      *
-     * @param  string                 $name
-     * @param  mixed                  $options
-     * @param  string                 $errorMessageTemplate
-     * @param  string $label
-     *
-     * @return Handler
+     * @param array<string, mixed> $options
      */
-    public function addRule($name, $options = null, $errorMessageTemplate = null, $label = null):Handler
+    public function addRule(string $name, array $options = [], string $errorMessageTemplate = null, string $label = null): self
     {
         $predefinedRules = [
             static::RULE_EXTENSION,
@@ -187,18 +156,18 @@ class Handler implements UploadHandlerInterface
         if (in_array($name, $predefinedRules)) {
             $name = 'upload' . $name;
         }
-        $this->validator->add($name, $options, $errorMessageTemplate, $label);
+        if ($this->validator) {
+            $this->validator->add($name, $options, $errorMessageTemplate, $label);
+        }
 
         return $this;
     }
 
     /**
      * Processes a file upload and returns an upload result file/collection
-     *
-     * @param  array                         $files
      * @return Result\Collection|Result\File|ResultInterface
      */
-    public function process($files = []):ResultInterface
+    public function process(mixed $files): ResultInterface
     {
         $files = Helper::normalizeFiles($files);
 
@@ -219,16 +188,17 @@ class Handler implements UploadHandlerInterface
      * - validates the file
      * - if valid, moves the file to the container
      *
-     * @param  array $file
-     * @return array
+     * @param array<string, mixed> $file
+     *
+     * @return array<string, mixed>
      */
-    protected function processSingleFile(array $file):array
+    protected function processSingleFile(array $file): array
     {
         // store it for future reference
         $file['original_name'] = $file['name'];
 
         // sanitize the file name
-        $file['name'] = $this->sanitizeFileName($file['name'], $file);
+        $file['name'] = $this->sanitizeFileName($file['name']);
 
         $file = $this->validateFile($file);
         // if there are messages the file is not valid
@@ -239,13 +209,13 @@ class Handler implements UploadHandlerInterface
         // add the prefix
         $prefix = '';
         if (is_callable($this->prefix)) {
-            $prefix = (string) call_user_func($this->prefix, $file['name']);
+            $prefix = (string)call_user_func($this->prefix, $file['name']);
         } elseif (is_string($this->prefix)) {
-            $prefix = (string) $this->prefix;
+            $prefix = (string)$this->prefix;
         }
 
         // if overwrite is not allowed, check if the file is already in the container
-        if (!$this->overwrite) {
+        if ( ! $this->overwrite) {
             if ($this->container->has($prefix . $file['name'])) {
                 // add the timestamp to ensure the file is unique
                 // method is not bulletproof but it's pretty safe
@@ -254,7 +224,7 @@ class Handler implements UploadHandlerInterface
         }
 
         // attempt to move the uploaded file into the container
-        if (!$this->container->moveUploadedFile($file['tmp_name'], $prefix . $file['name'])) {
+        if ( ! $this->container->moveUploadedFile($file['tmp_name'], $prefix . $file['name'])) {
             $file['name'] = false;
 
             return $file;
@@ -262,8 +232,8 @@ class Handler implements UploadHandlerInterface
 
         $file['name'] = $prefix . $file['name'];
         // create the lock file if autoconfirm is disabled
-        if (!$this->autoconfirm) {
-            $this->container->save($file['name'] . '.lock', (string) time());
+        if ( ! $this->autoconfirm) {
+            $this->container->save($file['name'] . '.lock', (string)time());
         }
 
         return $file;
@@ -272,12 +242,13 @@ class Handler implements UploadHandlerInterface
     /**
      * Validates a file according to the rules configured on the handler
      *
-     * @param $file
-     * @return mixed
+     * @param array<string, mixed> $file
+     *
+     * @return array<string, mixed>
      */
-    protected function validateFile($file)
+    protected function validateFile(array $file): array
     {
-        if (!$this->validator->validate($file)) {
+        if ($this->validator && ! $this->validator->validate($file)) {
             $file['messages'] = $this->validator->getMessages();
         }
 
@@ -287,16 +258,13 @@ class Handler implements UploadHandlerInterface
     /**
      * Sanitize the name of the uploaded file by stripping away bad characters
      * and replacing "invalid" characters with underscore _
-     *
-     * @param  string $name
-     * @param  array $file
-     * @return string
      */
-    protected function sanitizeFileName($name, $file)
+    protected function sanitizeFileName(string $name): string
     {
-        if ($this->sanitizerCallback) {
-            return call_user_func($this->sanitizerCallback, $name, $file);
+        if (is_callable($this->sanitizerCallback)) {
+            return call_user_func($this->sanitizerCallback, $name);
         }
-        return preg_replace('/[^A-Za-z0-9\.]+/', '_', $name);
+
+        return preg_replace('/[^A-Za-z0-9\.]+/', '_', $name); // @phpstan-ignore-line
     }
 }

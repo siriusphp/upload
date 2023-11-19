@@ -9,14 +9,12 @@ interface ContainerInterface
     /**
      * Check if the container is writable
      */
-    public function isWritable();
+    public function isWritable(): bool;
 
     /**
      * This will check if a file is in the container
-     *
-     * @param string $file
      */
-    public function has($file);
+    public function has(string $file): bool;
 
     /**
      * Saves the $content string as a file
@@ -24,20 +22,15 @@ interface ContainerInterface
      * @param string $file
      * @param string $content
      */
-    public function save($file, $content);
+    public function save(string $file, string $content): bool;
 
     /**
      * Delete the file from the container
-     *
-     * @param string $file
      */
-    public function delete($file);
+    public function delete(string $file): bool;
 
     /**
      * Moves a temporary uploaded file to a destination in the container
-     *
-     * @param string $localFile   local path
-     * @param string $destination
      */
-    public function moveUploadedFile($localFile, $destination);
+    public function moveUploadedFile(string $localFile, string $destination): bool;
 }

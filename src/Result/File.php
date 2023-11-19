@@ -5,6 +5,9 @@ namespace Sirius\Upload\Result;
 
 use Sirius\Upload\Container\ContainerInterface;
 
+/**
+ * @property string $name
+ */
 class File implements ResultInterface
 {
 
@@ -15,23 +18,22 @@ class File implements ResultInterface
      * - tmp_name
      * etc
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $file;
+    protected array $file;
 
     /**
      * The container to which this file belongs to
-     * @var ContainerInterface
      */
-    protected $container;
+    protected ContainerInterface $container;
 
     /**
-     * @param $file
+     * @param array<string, mixed> $file
      * @param ContainerInterface $container
      */
-    public function __construct($file, ContainerInterface $container)
+    public function __construct(array $file, ContainerInterface $container)
     {
-        $this->file = $file;
+        $this->file      = $file;
         $this->container = $container;
     }
 
@@ -40,7 +42,7 @@ class File implements ResultInterface
      *
      * @return bool
      */
-    public function isValid():bool
+    public function isValid(): bool
     {
         return $this->file['name'] && count($this->getMessages()) === 0;
     }
@@ -48,9 +50,9 @@ class File implements ResultInterface
     /**
      * Returns the validation error messages
      *
-     * @return array
+     * @return array<string, mixed>
      */
-    public function getMessages():array
+    public function getMessages(): array
     {
         if (isset($this->file['messages'])) {
             return $this->file['messages'];
@@ -63,7 +65,7 @@ class File implements ResultInterface
      * The file that was saved during process() and has a .lock file attached
      * will be cleared, in case the form processing fails
      */
-    public function clear()
+    public function clear(): void
     {
         $this->container->delete($this->name);
         $this->container->delete($this->name . '.lock');
@@ -74,18 +76,12 @@ class File implements ResultInterface
      * Remove the .lock file attached to the file that was saved during process()
      * This should happen if the form fails validation/processing
      */
-    public function confirm()
+    public function confirm(): void
     {
         $this->container->delete($this->name . '.lock');
     }
 
-    /**
-     * File attribute getter
-     *
-     * @param $name
-     * @return mixed
-     */
-    public function __get($name)
+    public function __get(string $name): mixed
     {
         if (isset($this->file[$name])) {
             return $this->file[$name];
