@@ -47,5 +47,8 @@ jobs:
     - name: Run test suite
       run: |
         mkdir -p build/logs
+        mkdir -p tests/fixture/
+        mkdir -p tests/fixture/subdir
+        mkdir -p tests/fixture/sub
         composer run stan
         composer run test
