@@ -1,8 +1,8 @@
-[![Source Code](http://img.shields.io/badge/source-siriusphp/upload-blue.svg?style=flat-square)](https://github.com/siriusphp/upload)
+[![Source Code](https:////img.shields.io/badge/source-siriusphp/upload-blue.svg?style=flat-square)](https://github.com/siriusphp/upload)
 [![Latest Version](https://img.shields.io/packagist/v/siriusphp/upload.svg?style=flat-square)](https://github.com/siriusphp/upload/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://github.com/siriusphp/upload/blob/master/LICENSE)
 [![Build Status](https://img.shields.io/travis/siriusphp/upload/master.svg?style=flat-square)](https://travis-ci.org/siriusphp/upload)
-[![PHP 7 ready](http://php7ready.timesplinter.ch/siriusphp/upload/master/badge.svg)](https://travis-ci.org/siriusphp/upload)
+[![PHP 7 ready](https:////php7ready.timesplinter.ch/siriusphp/upload/master/badge.svg)](https://travis-ci.org/siriusphp/upload)
 [![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/siriusphp/upload.svg?style=flat-square)](https://scrutinizer-ci.com/g/siriusphp/upload/code-structure)
 [![Quality Score](https://img.shields.io/scrutinizer/g/siriusphp/upload.svg?style=flat-square)](https://scrutinizer-ci.com/g/siriusphp/upload)
 [![Total Downloads](https://img.shields.io/packagist/dt/siriusphp/upload.svg?style=flat-square)](https://packagist.org/packages/siriusphp/upload)
@@ -13,7 +13,7 @@ This is a framework agnostic upload handler library that is flexible and easy to
 
 ## Features
 
-1. Validates files agains usual rules: extension, file size, image size (wdith, height, ratio). It uses [Sirius Validation](http://github.com/siriusphp/validation) for this purpose.
+1. Validates files agains usual rules: extension, file size, image size (wdith, height, ratio). It uses [Sirius Validation](https:////github.com/siriusphp/validation) for this purpose.
 2. Moves valid uploads into containers. Containers are usually local folders but you can implement your own or use other filesystem abstractions like [Gaufrette](https://github.com/KnpLabs/Gaufrette) or [Flysystem](https://github.com/FrenkyNet/Flysystem).
 3. Works with PSR7 `UploadedFileInterface` objects and with Symfony's `UploadedFile`s (see [integrations](integrations.md)).
 

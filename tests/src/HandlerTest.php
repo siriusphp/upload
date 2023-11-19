@@ -145,7 +145,7 @@ test('multi upload', function () {
     $this->createTemporaryFile('abc.tmp', 'first_file');
     $this->createTemporaryFile('def.tmp', 'first_file');
 
-    // array is already properly formated
+    // array is already properly formatted
     $result = $this->handler->process(
         array(
             array(

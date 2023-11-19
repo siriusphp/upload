@@ -73,9 +73,9 @@ class Helper
     /**
      * Fixes the $_FILES array problem and ensures the result is an array of files
      *
-     * PHP's $_FILES variable is not properly formated for iteration when
+     * PHP's $_FILES variable is not properly formatted for iteration when
      * multiple files are uploaded under the same name
-     * @see http://www.php.net/manual/en/features.file-upload.php
+     * @see https://www.php.net/manual/en/features.file-upload.php
      *
      * @param array<string, mixed|UploadedFile|UploadedFileInterface>|UploadedFile|UploadedFileInterface $files
      *
