@@ -56,4 +56,4 @@ jobs:
         mkdir -p tests/fixtures/container/subfolder
         mkdir -p tests/fixtures/container/user_picture
         composer run stan
-        composer run test
+        sudo composer run test
