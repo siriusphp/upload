@@ -50,5 +50,10 @@ jobs:
         mkdir -p tests/fixture/
         mkdir -p tests/fixture/subdir
         mkdir -p tests/fixture/sub
+        mkdir -p tests/fixtures/container
+        mkdir -p tests/fixtures/container/photo
+        mkdir -p tests/fixtures/container/resume
+        mkdir -p tests/fixtures/container/subfolder
+        mkdir -p tests/fixtures/container/user_picture
         composer run stan
         composer run test
