@@ -23,7 +23,6 @@ class Local implements ContainerInterface
     protected function ensureDirectory(string $directory): bool
     {
         if ( ! is_dir($directory)) {
-            echo $directory, PHP_EOL;
             mkdir($directory, 0755, true);
         }
 
