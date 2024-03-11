@@ -10,24 +10,24 @@ interface ResultInterface
      *
      * @return bool
      */
-    public function isValid():bool;
+    public function isValid(): bool;
 
     /**
      * Returns the validation error messages
      *
-     * @return array
+     * @return array<string, mixed>
      */
-    public function getMessages():array;
+    public function getMessages(): array;
 
     /**
      * The file that was saved during process() and has a .lock file attached
      * will be cleared, in case the form processing fails
      */
-    public function clear();
+    public function clear(): void;
 
     /**
      * Remove the .lock file attached to the file that was saved during process()
      * This should happen if the form fails validation/processing
      */
-    public function confirm();
+    public function confirm(): void;
 }

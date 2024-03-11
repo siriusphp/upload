@@ -3,7 +3,6 @@
 .buildpath
 .project
 build/
-tests/fixitures/
 vendor/
 composer.lock
 atlassian-ide-plugin.xml

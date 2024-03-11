@@ -7,10 +7,13 @@ use Sirius\Upload\Container\ContainerInterface;
 
 class Collection extends \ArrayIterator implements ResultInterface
 {
-    public function __construct($files = [], ContainerInterface $container = null)
+    /**
+     * @param array<int, mixed> $files
+     */
+    public function __construct(array $files = [], ContainerInterface $container = null)
     {
         $filesArray = [];
-        if (is_array($files) && !empty($files)) {
+        if ($container && ! empty($files)) {
             foreach ($files as $key => $file) {
                 $filesArray[$key] = new File($file, $container);
             }
@@ -18,7 +21,7 @@ class Collection extends \ArrayIterator implements ResultInterface
         parent::__construct($filesArray);
     }
 
-    public function clear()
+    public function clear(): void
     {
         foreach ($this as $file) {
             /* @var $file \Sirius\Upload\Result\File */
@@ -26,7 +29,7 @@ class Collection extends \ArrayIterator implements ResultInterface
         }
     }
 
-    public function confirm()
+    public function confirm(): void
     {
         foreach ($this as $file) {
             /* @var $file \Sirius\Upload\Result\File */
@@ -34,7 +37,7 @@ class Collection extends \ArrayIterator implements ResultInterface
         }
     }
 
-    public function isValid():bool
+    public function isValid(): bool
     {
         foreach ($this->getMessages() as $messages) {
             if ($messages) {
@@ -45,7 +48,10 @@ class Collection extends \ArrayIterator implements ResultInterface
         return true;
     }
 
-    public function getMessages():array
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function getMessages(): array
     {
         $messages = [];
         foreach ($this as $key => $file) {
