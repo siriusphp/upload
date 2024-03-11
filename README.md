@@ -1,6 +1,6 @@
 # Sirius\Upload
 
-[![Source Code](http://img.shields.io/badge/source-siriusphp/upload-blue.svg?style=flat-square)](https://github.com/siriusphp/upload)
+[![Source Code](https://img.shields.io/badge/source-siriusphp/upload-blue.svg?style=flat-square)](https://github.com/siriusphp/upload)
 [![Latest Version](https://img.shields.io/packagist/v/siriusphp/upload.svg?style=flat-square)](https://github.com/siriusphp/upload/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://github.com/siriusphp/upload/blob/master/LICENSE)
 [![Build Status](https://github.com/siriusphp/upload/actions/workflows/ci.yml/badge.svg)](https://github.com/siriusphp/upload/actions/workflows/ci.yml)
@@ -12,7 +12,7 @@ Framework agnostic upload handler library.
 
 ## Features
 
-1. Validates files agains usual rules: extension, file size, image size (wdith, height, ratio). It uses [Sirius Validation](http://github.com/siriusphp/validation) for this purpose.
+1. Validates files against usual rules: extension, file size, image size (wdith, height, ratio). It uses [Sirius Validation](https://github.com/siriusphp/validation) for this purpose.
 2. Moves valid uploaded files into containers. Containers are usually local folders but you can implement your own or use other filesystem abstractions like [Gaufrette](https://github.com/KnpLabs/Gaufrette) or [Flysystem](https://github.com/FrenkyNet/Flysystem).
 3. Works with PSR7 `UploadedFileInterface` objects and with Symfony's `UploadedFile`s (see [integrations](docs/integrations.md)).
 
@@ -47,7 +47,7 @@ if ($result->isValid()) {
 }
 ```
 
-##Links
+## Links
 
-- [documentation](http://www.sirius.ro/php/sirius/upload/)
+- [documentation](https://www.sirius.ro/php/sirius/upload/)
 - [changelog](CHANGELOG.md)
